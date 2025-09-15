@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace TechCenter.Models;
+
+public partial class Giaovien
+{
+    public int IdGiaovien { get; set; }
+
+    public int IdTaikhoan { get; set; }
+
+    public string Hotengv { get; set; } = null!;
+
+    public string? Gioitinhgv { get; set; }
+
+    public DateOnly? Ngaysinhgv { get; set; }
+
+    public string? Diachigv { get; set; }
+
+    public bool IsActive { get; set; }
+
+    public virtual Taikhoan IdTaikhoanNavigation { get; set; } = null!;
+
+    public virtual ICollection<Nhanxettiendo> Nhanxettiendos { get; set; } = new List<Nhanxettiendo>();
+
+    public virtual ICollection<Phancong> Phancongs { get; set; } = new List<Phancong>();
+}
