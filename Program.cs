@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TechCenter.Models;
+using TechCenter.Services;
+using TechCenter.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,16 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TechCenterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
 
-
-
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // thêm các services ở đây
+builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
+builder.Services.AddScoped<IVaiTroService, VaiTroService>();
+
 
 
 
