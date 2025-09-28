@@ -21,11 +21,27 @@ builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<IVaiTroService, VaiTroService>();
 
 
+// Cho phép CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") // FE Vite
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
+
 
 
 var app = builder.Build();
 
 
+
+//kiểm tra kết nối
 Action checkDatabaseConnection = () =>
 {
     using (var scope = app.Services.CreateScope())
@@ -47,6 +63,7 @@ Action checkDatabaseConnection = () =>
 // Gọi action để kiểm tra kết nối khi ứng dụng khởi động
 checkDatabaseConnection();
 
+app.UseCors("AllowFrontend");
 
 
 // Configure the HTTP request pipeline.
