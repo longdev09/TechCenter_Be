@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TechCenter.Models;
+using TechCenter.Services;
+using TechCenter.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,22 +10,39 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TechCenterContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
 
-
-
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // thêm các services ở đây
+builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
+builder.Services.AddScoped<IVaiTroService, VaiTroService>();
+builder.Services.AddScoped<IHocVienService, HocVienService>();
+
+
+// Cho phép CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") // FE Vite
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
 
 
 
 var app = builder.Build();
 
 
+
+//kiểm tra kết nối
 Action checkDatabaseConnection = () =>
 {
     using (var scope = app.Services.CreateScope())
@@ -45,6 +64,7 @@ Action checkDatabaseConnection = () =>
 // Gọi action để kiểm tra kết nối khi ứng dụng khởi động
 checkDatabaseConnection();
 
+app.UseCors("AllowFrontend");
 
 
 // Configure the HTTP request pipeline.

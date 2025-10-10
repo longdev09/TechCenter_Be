@@ -1,3 +1,19 @@
+# Visual Studio
 .vs/
+*.user
+*.suo
+
+# Build
 bin/
 obj/
+
+# Publish
+out/
+publish/
+
+# Logs
+*.log
+
+# Config (nếu không muốn public file cấu hình)
+appsettings.json
+appsettings.*.json
