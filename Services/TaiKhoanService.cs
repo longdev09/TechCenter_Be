@@ -14,14 +14,16 @@ namespace TechCenter.Services
     {
         private readonly string _secret;
         private readonly TechCenterContext _context;
-        public TaiKhoanService(TechCenterContext context, IConfiguration configuration)
+        private readonly IHocVienService _hocVienService;
+        public TaiKhoanService(TechCenterContext context, IConfiguration configuration, IHocVienService hocVienService)
         {
             _secret = configuration.GetValue<string>("Jwt:SecretKey");
             _context = context;
+            _hocVienService = hocVienService;
         }
        
 
-        public async Task<object> CreateTaiKhoan(string tenDangNhap, string matKhau, string sdt, string email, int vaiTro)
+        public async Task<object> CreateTaiKhoan(string tenDangNhap, string matKhau, string email, int vaiTro, string tenNguoiDung)
         {
             bool emailExists = await _context.Taikhoans.AnyAsync(t => t.Email == email && t.Tendangnhap == tenDangNhap);
             if (emailExists)
@@ -38,13 +40,30 @@ namespace TechCenter.Services
                 Tendangnhap = tenDangNhap,
                 Matkhauhash = passwordHash,
                 Email = email,
-                Sodienthoai = sdt,
                 Ngaytao = DateOnly.FromDateTime(DateTime.Now),
                 IsActive = true
             };
 
             _context.Taikhoans.Add(taiKhoan);
             await _context.SaveChangesAsync();
+
+            int idTaiKhoan = taiKhoan.IdTaikhoan; // Lấy id vừa tạo
+
+            // thêm thông tin học viên
+            if (vaiTro == 2)
+            {
+               await _hocVienService.CreateHocVien(new HocVienDTO
+                {
+                    hoTenHv = tenNguoiDung,
+                    idTaiKhoan = idTaiKhoan
+                });
+            }
+
+            //if(vaiTro == 3)
+            //{
+               
+            //}
+            
 
             // Chỉ trả về những field cần thiết
             return new
@@ -62,7 +81,13 @@ namespace TechCenter.Services
             // Tìm tài khoản khớp
             var taiKhoan = await _context.Taikhoans
                 .FirstOrDefaultAsync(t => t.Tendangnhap == dangNhapDTO.Tendangnhap
-                                       && t.Matkhauhash == passwordHash);
+                                      && t.Matkhauhash == passwordHash);
+
+
+            //var tenNguoiDung = await _context.Hocviens
+            //    .Where(hv => hv.IdTaikhoan == taiKhoan.IdTaikhoan)
+            //    .Select(hv => hv.ten)
+            //    .FirstOrDefaultAsync();
 
             if (taiKhoan == null)
             {

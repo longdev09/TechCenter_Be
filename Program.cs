@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen();
 // thêm các services ở đây
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<IVaiTroService, VaiTroService>();
+builder.Services.AddScoped<IHocVienService, HocVienService>();
 
 
 // Cho phép CORS

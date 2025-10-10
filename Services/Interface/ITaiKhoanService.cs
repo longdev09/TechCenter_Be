@@ -4,7 +4,7 @@ namespace TechCenter.Services.Interface
 {
     public interface ITaiKhoanService
     {
-        Task<object> CreateTaiKhoan(string tenDangNhap, string matKhau, string sdt, string email, int vaiTro);
+        Task<object> CreateTaiKhoan(string tenDangNhap, string matKhau, string email, int vaiTro, string tenNguoiDung);
         Task<object> Login(DangNhapDTO dangNhapDTO);
     }
 }
