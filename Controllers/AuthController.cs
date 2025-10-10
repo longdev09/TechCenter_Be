@@ -23,7 +23,7 @@ namespace TechCenter.Controllers
                 return BadRequest("Dữ liệu tài khoản không hợp lệ.");
             try
             {
-                var createdAccount = await _taiKhoanService.CreateTaiKhoan(taoTaiKhoanDTO.Tendangnhap, taoTaiKhoanDTO.Matkhau, taoTaiKhoanDTO.SoDienThoai, taoTaiKhoanDTO.Email, 3);
+                var createdAccount = await _taiKhoanService.CreateTaiKhoan(taoTaiKhoanDTO.Tendangnhap, taoTaiKhoanDTO.Matkhau, taoTaiKhoanDTO.Email, 2, taoTaiKhoanDTO.Hoten);
                 // Trả về 201 Created cùng với tài nguyên mới
                 return CreatedAtAction(
                     nameof(CreateTaiKhoanHocVien),          
@@ -51,7 +51,7 @@ namespace TechCenter.Controllers
             try
             {
                 var result = await _taiKhoanService.Login(dangNhapDTO);
-                return Ok(result);  // Trả về token + user info
+                return Ok(result);
             }
             catch (Exception ex)
             {
