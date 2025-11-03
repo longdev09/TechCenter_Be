@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TechCenter.Middleware.TechCenter.Middleware;
 using TechCenter.Models;
 using TechCenter.Services;
 using TechCenter.Services.Interface;
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //cấu hình Sql EF Core
 
-builder.Services.AddDbContext<TechCenterContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
 
 // Add services to the container.
@@ -20,6 +21,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<IVaiTroService, VaiTroService>();
 builder.Services.AddScoped<IHocVienService, HocVienService>();
+builder.Services.AddScoped<IKhoaHocService, KhoaHocService>();
+builder.Services.AddScoped<ILopHocService, LopHocService>();
 
 
 // Cho phép CORS
@@ -47,7 +50,7 @@ Action checkDatabaseConnection = () =>
 {
     using (var scope = app.Services.CreateScope())
     {
-        var dbContext = scope.ServiceProvider.GetRequiredService<TechCenterContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         try
         {
             dbContext.Database.OpenConnection();
@@ -75,7 +78,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

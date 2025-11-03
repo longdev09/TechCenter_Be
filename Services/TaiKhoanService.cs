@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,9 +12,9 @@ namespace TechCenter.Services
     public class TaiKhoanService : ITaiKhoanService
     {
         private readonly string _secret;
-        private readonly TechCenterContext _context;
+        private readonly AppDbContext _context;
         private readonly IHocVienService _hocVienService;
-        public TaiKhoanService(TechCenterContext context, IConfiguration configuration, IHocVienService hocVienService)
+        public TaiKhoanService(AppDbContext context, IConfiguration configuration, IHocVienService hocVienService)
         {
             _secret = configuration.GetValue<string>("Jwt:SecretKey");
             _context = context;
@@ -41,11 +40,22 @@ namespace TechCenter.Services
                 Matkhauhash = passwordHash,
                 Email = email,
                 Ngaytao = DateOnly.FromDateTime(DateTime.Now),
-                IsActive = true
+                IsActive = true,
+
+                
+
             };
 
-            _context.Taikhoans.Add(taiKhoan);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Taikhoans.Add(taiKhoan);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log or return the error message for diagnosis
+                throw new Exception("Lỗi khi tạo tài khoản: " + ex.Message, ex);
+            }
 
             int idTaiKhoan = taiKhoan.IdTaikhoan; // Lấy id vừa tạo
 

@@ -7,8 +7,8 @@ namespace TechCenter.Services
 {
     public class VaiTroService : IVaiTroService
     {
-        private readonly TechCenterContext _context;
-        public VaiTroService(TechCenterContext context)
+        private readonly AppDbContext _context;
+        public VaiTroService(AppDbContext context)
         {
             _context = context;
         }

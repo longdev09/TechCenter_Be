@@ -7,8 +7,8 @@ namespace TechCenter.Services
 {
     public class HocVienService : IHocVienService
     {
-        private readonly TechCenterContext _context;
-        public HocVienService(TechCenterContext context)
+        private readonly AppDbContext _context;
+        public HocVienService(AppDbContext context)
         {
             _context = context;
         }
