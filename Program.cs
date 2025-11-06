@@ -6,6 +6,8 @@ using TechCenter.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
+
 //cấu hình Sql EF Core
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -23,6 +25,10 @@ builder.Services.AddScoped<IVaiTroService, VaiTroService>();
 builder.Services.AddScoped<IHocVienService, HocVienService>();
 builder.Services.AddScoped<IKhoaHocService, KhoaHocService>();
 builder.Services.AddScoped<ILopHocService, LopHocService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
+builder.Services.AddScoped<IThanhToanService, ThanhToanService>();
+builder.Services.AddScoped<IDangKyHocService, DangKyHocService>();
+
 
 
 // Cho phép CORS

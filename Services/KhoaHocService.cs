@@ -50,6 +50,10 @@ namespace TechCenter.Services
                 .FirstOrDefaultAsync();
         }
 
+
+       
+
+
         //public async Task<KhoaHocDTO> GetKhoaHocByID(int id)
         //{
         //   return await _context.Khoahocs

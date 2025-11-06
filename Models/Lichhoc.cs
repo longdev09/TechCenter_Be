@@ -17,7 +17,7 @@ public partial class Lichhoc
     public int IdLophoc { get; set; }
 
     [Column("THU")]
-    public int Thu { get; set; }
+    public int? Thu { get; set; }
 
     [Column("GIOBATDAU", TypeName = "datetime")]
     public DateTime Giobatdau { get; set; }

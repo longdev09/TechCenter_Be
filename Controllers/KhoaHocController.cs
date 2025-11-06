@@ -26,7 +26,7 @@ namespace TechCenter.Controllers
         }
 
         // GET: api/KhoaHoc/5
-        [HttpGet("getKhoaHocByID")]
+        [HttpGet("GetKhoaHocByID")]
         public async Task<IActionResult> GetById(int id)
         {
             var item = await _khoaHocService.GetKhoaHocById(id);

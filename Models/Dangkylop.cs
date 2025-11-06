@@ -42,4 +42,7 @@ public partial class Dangkylop
     [ForeignKey("IdUudai")]
     [InverseProperty("Dangkylops")]
     public virtual Ctuudai? IdUudaiNavigation { get; set; }
+
+    [InverseProperty("IdDangkyNavigation")]
+    public virtual ICollection<Thanhtoan> Thanhtoans { get; set; } = new List<Thanhtoan>();
 }

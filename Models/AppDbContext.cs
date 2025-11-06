@@ -67,6 +67,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Tailieu> Tailieus { get; set; }
 
+    public virtual DbSet<Thanhtoan> Thanhtoans { get; set; }
+
     public virtual DbSet<Vaitro> Vaitros { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -407,6 +409,15 @@ public partial class AppDbContext : DbContext
                         j.IndexerProperty<int>("IdTailieu").HasColumnName("ID_TAILIEU");
                         j.IndexerProperty<int>("IdLophoc").HasColumnName("ID_LOPHOC");
                     });
+        });
+
+        modelBuilder.Entity<Thanhtoan>(entity =>
+        {
+            entity.HasKey(e => e.IdThanhtoan).HasName("PK__THANHTOA__B8F0855B11B24013");
+
+            entity.Property(e => e.Ngaytt).HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.IdDangkyNavigation).WithMany(p => p.Thanhtoans).HasConstraintName("FK__THANHTOAN__ID_DA__0880433F");
         });
 
         modelBuilder.Entity<Vaitro>(entity =>
