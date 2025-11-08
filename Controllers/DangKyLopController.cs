@@ -20,7 +20,7 @@ namespace TechCenter.Controllers
         public async Task<IActionResult> CreateDangKyLop([FromBody] InsertDangKyHocDTO dto)
         {
             var dangKyLop = await _dangKyHocService.CreateDangKyLopAsync(dto);
-            return Ok(BaseResponse<object>.SuccessCreated(dangKyLop));
+            return Ok(BaseResponse<object>.SuccessCreated());
         }
     }
 }
