@@ -1,4 +1,4 @@
-﻿using TechCenter.DTO;
+﻿using TechCenter.DTO.HocVien;
 
 namespace TechCenter.Services.Interface
 {
@@ -6,6 +6,8 @@ namespace TechCenter.Services.Interface
     {
 
         Task<HocVienDTO> CreateHocVien(HocVienDTO hocvien);
-      
+        Task<HocVienDTO?> GetByIdTaiKhoanAsync(int idTaiKhoan);
+
+
     }
 }

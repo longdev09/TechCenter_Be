@@ -41,5 +41,10 @@ namespace TechCenter.Services
 
             return entity;
         }
+
+        // get thong tin lich hoc cho hoc vien 
+
+
+
     }
 }

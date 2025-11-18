@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TechCenter.DTO;
+using TechCenter.DTO.HocVien;
 using TechCenter.Models;
 using TechCenter.Services.Interface;
 
@@ -65,5 +65,24 @@ namespace TechCenter.Services
             await _context.SaveChangesAsync();
             return true;
         }
-    }
+
+        public async Task<HocVienDTO?> GetByIdTaiKhoanAsync(int idTaiKhoan)
+        {
+            return await _context.Hocviens
+                .AsNoTracking()
+                .Where(h => h.IdTaikhoan == idTaiKhoan)
+                .Select(h => new HocVienDTO
+                {
+                    idTaiKhoan = h.IdTaikhoan,
+                    idHocVien = h.IdHocvien,
+                    hoTenHv = h.Hotenhv,
+                    gioiTinhHv = h.Gioitinhhv,
+                    ngaySinhHv = h.Ngaysinhhv,
+                    diaChiHv = h.Diachihv
+                })
+                .FirstOrDefaultAsync();
+        }
+
+       
+    } 
 }

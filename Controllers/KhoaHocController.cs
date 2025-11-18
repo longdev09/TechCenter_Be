@@ -18,7 +18,7 @@ namespace TechCenter.Controllers
         }
 
         // GET: api/KhoaHoc
-        [HttpGet("getAllKhoaHoc")]
+        [HttpGet("GetAllKhoaHoc")]
         public async Task<ActionResult<List<KhoaHocDTO>>> GetAll()
         {
             var list = await _khoaHocService.GetAllKhoaHocAsync();
@@ -31,6 +31,14 @@ namespace TechCenter.Controllers
         {
             var item = await _khoaHocService.GetKhoaHocById(id);
             return Ok(BaseResponse<object>.SuccessFetched(item));
+        }
+
+        // GET: api/KhoaHoc/GetKhoaHocByHocVien
+        [HttpGet("GetKhoaHocByHocVien")]
+        public async Task<IActionResult> GetKhoaHocByHocVien(int idHocVien)
+        {
+            var list = await _khoaHocService.GetKhoaHocByIdHocVien(idHocVien);
+            return Ok(BaseResponse<object>.SuccessFetched(list));
         }
     }
 }

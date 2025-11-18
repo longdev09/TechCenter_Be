@@ -15,6 +15,7 @@ namespace TechCenter.DTO.LopHoc
         public int? IdKhoaHoc { get; set; }
         public string? HoTenGV { get; set; }
 
+
         // Thêm danh sách lịch học của lớp
         public List<LichHocDTO>? LichHocs { get; set; }
     }

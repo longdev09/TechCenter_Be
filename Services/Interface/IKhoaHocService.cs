@@ -6,5 +6,6 @@ namespace TechCenter.Services.Interface
     {
         Task<List<KhoaHocDTO>> GetAllKhoaHocAsync();
         Task<KhoaHocDTO?> GetKhoaHocById(int id);
+        Task<List<KhoaHocDTO>> GetKhoaHocByIdHocVien(int idHocVien);
     }
 }

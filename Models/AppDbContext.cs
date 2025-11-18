@@ -71,9 +71,9 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Vaitro> Vaitros { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=TechCenter;Trusted_Connection=True;");
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=TechCenter;Trusted_Connection=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -292,6 +292,8 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Khoahoc>(entity =>
         {
             entity.HasKey(e => e.IdKhoahoc).HasName("PK__KHOAHOC__2D63BD9E4A8DBE41");
+
+            entity.HasOne(d => d.IdLoaikynangNavigation).WithMany(p => p.Khoahocs).HasConstraintName("KHOAHOC_ID_LOAIKYNANG");
 
             entity.HasOne(d => d.IdcapdokhoahocNavigation).WithMany(p => p.Khoahocs).HasConstraintName("FK_KHOAHOC_CAPDO");
         });

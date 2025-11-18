@@ -18,9 +18,6 @@ public partial class Khoahoc
     [StringLength(100)]
     public string Tenkhoahoc { get; set; } = null!;
 
-    [Column("MOTAKH")]
-    public string? Motakh { get; set; }
-
     [Column("HOCPHI", TypeName = "decimal(18, 2)")]
     public decimal? Hocphi { get; set; }
 
@@ -31,11 +28,27 @@ public partial class Khoahoc
     [Column("IDCAPDOKHOAHOC")]
     public int? Idcapdokhoahoc { get; set; }
 
+    [Column("ID_LOAIKYNANG")]
+    public int? IdLoaikynang { get; set; }
+
+    [Column("MOTAKH")]
+    public string? Motakh { get; set; }
+
+    [Column("KETQUADATDUOC")]
+    public string? Ketquadatduoc { get; set; }
+
+    [Column("NOIDUNGKHOAHOC")]
+    public string? Noidungkhoahoc { get; set; }
+
     [InverseProperty("IdKhoahocNavigation")]
     public virtual ICollection<Baiviet> Baiviets { get; set; } = new List<Baiviet>();
 
     [InverseProperty("IdKhoahocNavigation")]
     public virtual ICollection<Baocaohoctap> Baocaohoctaps { get; set; } = new List<Baocaohoctap>();
+
+    [ForeignKey("IdLoaikynang")]
+    [InverseProperty("Khoahocs")]
+    public virtual Loaikynang? IdLoaikynangNavigation { get; set; }
 
     [ForeignKey("Idcapdokhoahoc")]
     [InverseProperty("Khoahocs")]

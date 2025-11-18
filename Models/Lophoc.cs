@@ -31,11 +31,6 @@ public partial class Lophoc
     [Column("NGAYKETTHUC")]
     public DateOnly Ngayketthuc { get; set; }
 
-    [Column("ID_TT_LOPHOC")]
-    [StringLength(20)]
-    [Unicode(false)]
-    public string? IdTtLophoc { get; set; }
-
     [InverseProperty("IdLophocNavigation")]
     public virtual ICollection<Dangkylop> Dangkylops { get; set; } = new List<Dangkylop>();
 
