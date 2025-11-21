@@ -42,21 +42,10 @@ namespace TechCenter.Services
                 Email = email,
                 Ngaytao = DateOnly.FromDateTime(DateTime.Now),
                 IsActive = true,
-
-                
-
             };
 
-            try
-            {
-                _context.Taikhoans.Add(taiKhoan);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                // Log or return the error message for diagnosis
-                throw new Exception("Lỗi khi tạo tài khoản: " + ex.Message, ex);
-            }
+            _context.Taikhoans.Add(taiKhoan);
+            await _context.SaveChangesAsync();
 
             int idTaiKhoan = taiKhoan.IdTaikhoan; // Lấy id vừa tạo
 
@@ -70,17 +59,20 @@ namespace TechCenter.Services
                 });
             }
 
-            //if(vaiTro == 3)
-            //{
-               
-            //}
-            
+            // Sinh token JWT
+            var token = GenerateToken(taiKhoan);
 
-            // Chỉ trả về những field cần thiết
+
             return new
             {
-                Tendangnhap = taiKhoan.Tendangnhap,
-                Email = taiKhoan.Email
+                Token = token,
+                User = new
+                {
+                    idTaikhoan = idTaiKhoan,
+                    tendangnhap = taiKhoan.Tendangnhap,
+                    vaitro = vaiTro
+                    
+                }
             };
         }
 

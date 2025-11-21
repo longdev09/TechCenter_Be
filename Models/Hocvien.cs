@@ -23,7 +23,6 @@ public partial class Hocvien
 
     [Column("GIOITINHHV")]
     [StringLength(3)]
-    [Unicode(false)]
     public string? Gioitinhhv { get; set; }
 
     [Column("NGAYSINHHV")]
@@ -41,6 +40,9 @@ public partial class Hocvien
 
     [InverseProperty("IdHvNavigation")]
     public virtual ICollection<Dangkylop> Dangkylops { get; set; } = new List<Dangkylop>();
+
+    [InverseProperty("IdHocvienNavigation")]
+    public virtual ICollection<Danhgiakh> Danhgiakhs { get; set; } = new List<Danhgiakh>();
 
     [InverseProperty("IdHvNavigation")]
     public virtual ICollection<Diemdanh> Diemdanhs { get; set; } = new List<Diemdanh>();

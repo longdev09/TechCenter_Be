@@ -9,7 +9,6 @@ namespace TechCenter.Models;
 [Table("TAIKHOAN")]
 [Index("Email", Name = "UQ__TAIKHOAN__161CF724C49F7DE0", IsUnique = true)]
 [Index("Tendangnhap", Name = "UQ__TAIKHOAN__6C836FE53C594D7B", IsUnique = true)]
-[Index("Sodienthoai", Name = "UQ__TAIKHOAN__7670E2990CA106FD", IsUnique = true)]
 public partial class Taikhoan
 {
     [Key]
@@ -33,11 +32,6 @@ public partial class Taikhoan
     [StringLength(100)]
     [Unicode(false)]
     public string Email { get; set; } = null!;
-
-    [Column("SODIENTHOAI")]
-    [StringLength(100)]
-    [Unicode(false)]
-    public string? Sodienthoai { get; set; }
 
     [Column("NGAYTAO")]
     public DateOnly? Ngaytao { get; set; }
@@ -63,7 +57,4 @@ public partial class Taikhoan
     [ForeignKey("IdVaitro")]
     [InverseProperty("Taikhoans")]
     public virtual Vaitro IdVaitroNavigation { get; set; } = null!;
-
-    [InverseProperty("IdGvNavigation")]
-    public virtual ICollection<Tailieu> Tailieus { get; set; } = new List<Tailieu>();
 }

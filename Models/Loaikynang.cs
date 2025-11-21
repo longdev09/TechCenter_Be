@@ -19,7 +19,4 @@ public partial class Loaikynang
 
     [InverseProperty("IdLoaikynangNavigation")]
     public virtual ICollection<Khoahoc> Khoahocs { get; set; } = new List<Khoahoc>();
-
-    [InverseProperty("IdLoaikynangNavigation")]
-    public virtual ICollection<LichhocChitiet> LichhocChitiets { get; set; } = new List<LichhocChitiet>();
 }

@@ -35,6 +35,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Dangkylop> Dangkylops { get; set; }
 
+    public virtual DbSet<Danhgiakh> Danhgiakhs { get; set; }
+
     public virtual DbSet<Dapan> Dapans { get; set; }
 
     public virtual DbSet<Deluyen> Deluyens { get; set; }
@@ -71,9 +73,9 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Vaitro> Vaitros { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=TechCenter;Trusted_Connection=True;");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=SQL5113.site4now.net;Database=db_ac08ce_sa2107;User Id=db_ac08ce_sa2107_admin;Password=sa21071009;MultipleActiveResultSets=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -198,6 +200,21 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.IdUudaiNavigation).WithMany(p => p.Dangkylops).HasConstraintName("FK_DANGKY_UUDAI");
         });
 
+        modelBuilder.Entity<Danhgiakh>(entity =>
+        {
+            entity.HasKey(e => e.IdDanhgia).HasName("PK__DANHGIAK__D7D8AB784C035CAA");
+
+            entity.Property(e => e.Ngaydanhgia).HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.IdHocvienNavigation).WithMany(p => p.Danhgiakhs)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DANHGIAKH_HOCVIEN");
+
+            entity.HasOne(d => d.IdKhoahocNavigation).WithMany(p => p.Danhgiakhs)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DANHGIAKH_KHOAHOC");
+        });
+
         modelBuilder.Entity<Dapan>(entity =>
         {
             entity.HasOne(d => d.IdCauhoiNavigation).WithMany(p => p.Dapans)
@@ -273,8 +290,6 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.IdGiaovien).HasName("PK__GIAOVIEN__0A44E67C5787B47B");
 
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-
             entity.HasOne(d => d.IdTaikhoanNavigation).WithOne(p => p.Giaovien)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_GIAOVIEN_TAIKHOAN");
@@ -317,10 +332,6 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.IdLichhocNavigation).WithMany(p => p.LichhocChitiets)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_LHCT_LICHHOC");
-
-            entity.HasOne(d => d.IdLoaikynangNavigation).WithMany(p => p.LichhocChitiets)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_LHCT_LOAIKYNANG");
         });
 
         modelBuilder.Entity<Loaide>(entity =>
@@ -388,10 +399,6 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Tailieu>(entity =>
         {
             entity.HasKey(e => e.IdTailieu).HasName("PK__TAILIEU__946A8809CF884262");
-
-            entity.HasOne(d => d.IdGvNavigation).WithMany(p => p.Tailieus)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TAILIEU_GV");
 
             entity.HasMany(d => d.IdLophocs).WithMany(p => p.IdTailieus)
                 .UsingEntity<Dictionary<string, object>>(

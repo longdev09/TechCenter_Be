@@ -13,9 +13,6 @@ public partial class Tailieu
     [Column("ID_TAILIEU")]
     public int IdTailieu { get; set; }
 
-    [Column("ID_GV")]
-    public int IdGv { get; set; }
-
     [Column("TIEUDETL")]
     [StringLength(255)]
     public string Tieudetl { get; set; } = null!;
@@ -31,10 +28,6 @@ public partial class Tailieu
 
     [Column("IS_PUBLIC")]
     public bool IsPublic { get; set; }
-
-    [ForeignKey("IdGv")]
-    [InverseProperty("Tailieus")]
-    public virtual Taikhoan IdGvNavigation { get; set; } = null!;
 
     [ForeignKey("IdTailieu")]
     [InverseProperty("IdTailieus")]

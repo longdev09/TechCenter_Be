@@ -40,11 +40,17 @@ public partial class Khoahoc
     [Column("NOIDUNGKHOAHOC")]
     public string? Noidungkhoahoc { get; set; }
 
+    [Column("DIEMDANHGIA", TypeName = "decimal(3, 2)")]
+    public decimal Diemdanhgia { get; set; }
+
     [InverseProperty("IdKhoahocNavigation")]
     public virtual ICollection<Baiviet> Baiviets { get; set; } = new List<Baiviet>();
 
     [InverseProperty("IdKhoahocNavigation")]
     public virtual ICollection<Baocaohoctap> Baocaohoctaps { get; set; } = new List<Baocaohoctap>();
+
+    [InverseProperty("IdKhoahocNavigation")]
+    public virtual ICollection<Danhgiakh> Danhgiakhs { get; set; } = new List<Danhgiakh>();
 
     [ForeignKey("IdLoaikynang")]
     [InverseProperty("Khoahocs")]

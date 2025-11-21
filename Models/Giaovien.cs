@@ -23,7 +23,6 @@ public partial class Giaovien
 
     [Column("GIOITINHGV")]
     [StringLength(3)]
-    [Unicode(false)]
     public string? Gioitinhgv { get; set; }
 
     [Column("NGAYSINHGV")]
@@ -32,9 +31,6 @@ public partial class Giaovien
     [Column("DIACHIGV")]
     [StringLength(255)]
     public string? Diachigv { get; set; }
-
-    [Column("IS_ACTIVE")]
-    public bool IsActive { get; set; }
 
     [ForeignKey("IdTaikhoan")]
     [InverseProperty("Giaovien")]

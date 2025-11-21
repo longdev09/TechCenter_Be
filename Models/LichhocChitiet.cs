@@ -16,9 +16,6 @@ public partial class LichhocChitiet
     [Column("ID_LICHHOC")]
     public int IdLichhoc { get; set; }
 
-    [Column("ID_LOAIKYNANG")]
-    public int IdLoaikynang { get; set; }
-
     [Column("NGAYHOC")]
     public DateOnly Ngayhoc { get; set; }
 
@@ -36,8 +33,4 @@ public partial class LichhocChitiet
     [ForeignKey("IdLichhoc")]
     [InverseProperty("LichhocChitiets")]
     public virtual Lichhoc IdLichhocNavigation { get; set; } = null!;
-
-    [ForeignKey("IdLoaikynang")]
-    [InverseProperty("LichhocChitiets")]
-    public virtual Loaikynang IdLoaikynangNavigation { get; set; } = null!;
 }

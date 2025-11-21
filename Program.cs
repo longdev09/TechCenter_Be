@@ -29,6 +29,7 @@ builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<IThanhToanService, ThanhToanService>();
 builder.Services.AddScoped<IDangKyHocService, DangKyHocService>();
 builder.Services.AddScoped<ILichHocService, LichHocService>();
+builder.Services.AddScoped<ITaiLieuService, TaiLieuService>();
 
 
 // Cho phép CORS
