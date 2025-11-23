@@ -42,5 +42,24 @@ namespace TechCenter.Controllers
             var hv = await _hocVienService.GetByIdTaiKhoanAsync(idTaiKhoan);
             return Ok(BaseResponse<object>.SuccessFetched(hv));
         }
+
+        [HttpGet("GetHocVienById")]
+        public async Task<IActionResult> GetById(int idHocVien)
+        {
+            var hv = await _hocVienService.GetHocVienByIdAsync(idHocVien);
+            return Ok(BaseResponse<object>.SuccessFetched(hv));
+        }
+
+
+        // Accepts multipart/form-data if including file (IFormFile in UpdateHocVienDTO)
+        [HttpPut("UpdateHocVien")]
+        public async Task<IActionResult> UpdateHocVien([FromForm] UpdateHocVienDTO dto)
+        {
+            var updated = await _hocVienService.UpdateHocVienAsync(dto);
+            if (updated == null)
+                return NotFound(BaseResponse<object>.Fail("Học viên không tồn tại", 404));
+
+            return Ok(BaseResponse<object>.SuccessUpdated(updated));
+        }
     }
 }

@@ -32,6 +32,9 @@ public partial class Hocvien
     [StringLength(255)]
     public string? Diachihv { get; set; }
 
+    [Unicode(false)]
+    public string? AnhHv { get; set; }
+
     [InverseProperty("IdHocvienNavigation")]
     public virtual ICollection<Baithidanop> Baithidanops { get; set; } = new List<Baithidanop>();
 

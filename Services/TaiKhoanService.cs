@@ -25,7 +25,7 @@ namespace TechCenter.Services
 
         public async Task<object> CreateTaiKhoan(string tenDangNhap, string matKhau, string email, int vaiTro, string tenNguoiDung)
         {
-            bool emailExists = await _context.Taikhoans.AnyAsync(t => t.Email == email && t.Tendangnhap == tenDangNhap);
+            bool emailExists = await _context.Taikhoans.AnyAsync(t => t.Email == email || t.Tendangnhap == tenDangNhap);
             if (emailExists)
             {
                 throw new Exception("Email hoặc tên đăng nhập đã tồn tại");
@@ -70,7 +70,7 @@ namespace TechCenter.Services
                 {
                     idTaikhoan = idTaiKhoan,
                     tendangnhap = taiKhoan.Tendangnhap,
-                    vaitro = vaiTro
+                    vaiTro = vaiTro
                     
                 }
             };
@@ -109,10 +109,9 @@ namespace TechCenter.Services
                 Token = token,
                 User = new
                 {
-                    IdTaikhoan = taiKhoan.IdTaikhoan,
-                    Tendangnhap = taiKhoan.Tendangnhap,
-                    //Email = taiKhoan.Email,
-                    //Sodienthoai = taiKhoan.Sodienthoai,
+                    idTaikhoan = taiKhoan.IdTaikhoan,
+                    tendangnhap = taiKhoan.Tendangnhap,
+                    vaiTro = taiKhoan.IdVaitro
                 }
             };
         }
@@ -172,6 +171,7 @@ namespace TechCenter.Services
             }
         }
 
+
         public string RefreshTokenNguoiDung(Taikhoan taikhoan, string token)
         {
             try
@@ -201,6 +201,61 @@ namespace TechCenter.Services
 
 
 
-    }
+        public async Task<object> GetInfoNguoiDung(int? idTaiKhoan, int? vt)
+        {
+
+            // Giáo viên
+            if (vt == 1)
+            {
+                var gv = await _context.Giaoviens
+                    .AsNoTracking()
+                    .Where(g => g.IdTaikhoan == idTaiKhoan)
+                    .Select(g => new
+                    {
+                        id = g.IdGiaovien,
+                        hoTen = g.Hotengv,
+                        vaiTro = vt
+
+                    })
+                    .FirstOrDefaultAsync();
+
+                return gv;
+            }
+
+            if (vt == 2)
+            {
+                var hv = await _context.Hocviens
+                    .AsNoTracking()
+                    .Where(h => h.IdTaikhoan == idTaiKhoan)
+                    .Select(h => new
+                    {
+                        id =h.IdHocvien,
+                        hoTen = h.Hotenhv,
+                        vaiTro = vt
+                    })
+                    .FirstOrDefaultAsync();
+
+                return hv;
+            }
+
+            return null;
+
+        }
+
+
+      
+            
+
+
+
+
+
+    
+
+
+
+
+
+}
        
 }

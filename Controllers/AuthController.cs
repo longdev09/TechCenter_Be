@@ -33,20 +33,18 @@ namespace TechCenter.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] DangNhapDTO dangNhapDTO)
         {
-            if (dangNhapDTO == null)
-            {
-                return BadRequest("Dữ liệu đăng nhập không hợp lệ.");
-            }
+          
 
-            try
-            {
-                var result = await _taiKhoanService.Login(dangNhapDTO);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return Unauthorized(new { message = ex.Message });
-            }
+            var result = await _taiKhoanService.Login(dangNhapDTO);
+            return Ok(BaseResponse<object>.SuccessFetched(result));
+        }
+
+
+        [HttpGet("GetInfoNguoiDung")]
+        public async Task<IActionResult> GetInfoNguoiDung(int? idTaiKhoan,  int? vt)
+        {
+            var result = await _taiKhoanService.GetInfoNguoiDung(idTaiKhoan, vt);
+            return Ok(BaseResponse<object>.SuccessFetched(result));
         }
 
 

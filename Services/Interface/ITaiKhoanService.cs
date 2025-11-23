@@ -6,5 +6,6 @@ namespace TechCenter.Services.Interface
     {
         Task<object> CreateTaiKhoan(string tenDangNhap, string matKhau, string email, int vaiTro, string tenNguoiDung);
         Task<object> Login(DangNhapDTO dangNhapDTO);
+        Task<object> GetInfoNguoiDung(int? idTaiKhoan, int? vt);
     }
 }

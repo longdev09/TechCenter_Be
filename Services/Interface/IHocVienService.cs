@@ -8,6 +8,10 @@ namespace TechCenter.Services.Interface
         Task<HocVienDTO> CreateHocVien(HocVienDTO hocvien);
         Task<HocVienDTO?> GetByIdTaiKhoanAsync(int idTaiKhoan);
 
+        Task<HocVienByIdDTO?> GetHocVienByIdAsync(int idHocVien);
+
+        Task<HocVienByIdDTO?> UpdateHocVienAsync(UpdateHocVienDTO dto);
+
 
     }
 }

@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TechCenter.Middleware.TechCenter.Middleware;
+﻿using CloudinaryDotNet;
+using Microsoft.EntityFrameworkCore;
+using TechCenter.Middleware;
 using TechCenter.Models;
 using TechCenter.Services;
 using TechCenter.Services.Interface;
@@ -30,6 +31,7 @@ builder.Services.AddScoped<IThanhToanService, ThanhToanService>();
 builder.Services.AddScoped<IDangKyHocService, DangKyHocService>();
 builder.Services.AddScoped<ILichHocService, LichHocService>();
 builder.Services.AddScoped<ITaiLieuService, TaiLieuService>();
+builder.Services.AddScoped<IUploadAnhService, UploadAnhService>();
 
 
 // Cho phép CORS
@@ -45,6 +47,13 @@ builder.Services.AddCors(options =>
         });
 });
 
+
+// Add Cloudinary config
+builder.Services.AddSingleton(new Cloudinary(new Account(
+    builder.Configuration["Cloudinary:CloudName"],
+    builder.Configuration["Cloudinary:ApiKey"],
+    builder.Configuration["Cloudinary:ApiSecret"]
+)));
 
 
 
