@@ -22,6 +22,7 @@ namespace TechCenter.Services
 
 
         // tạo thanh toán
+
         public Task<string> CreatePaymentUrlAsync(decimal amount)
         {
             var vnp_TmnCode = _config["VNPay:TmnCode"];
@@ -29,36 +30,59 @@ namespace TechCenter.Services
             var vnp_Url = _config["VNPay:BaseUrl"];
             var vnp_ReturnUrl = _config["VNPay:ReturnUrl"];
 
+            // Mã đơn hàng (tham khảo, có thể thay cách sinh khác)
             var orderId = DateTime.Now.Ticks.ToString();
+            // Lấy IP client
             var ip = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
 
+            // Tạo các tham số gửi sang VNPAY
             var vnpParams = new SortedDictionary<string, string>(StringComparer.Ordinal)
-            {
-                { "vnp_Version", "2.1.1" }, 
-                { "vnp_Command", "pay" },
-                { "vnp_TmnCode", vnp_TmnCode },
-                { "vnp_Amount", ((long)(amount * 100)).ToString() },
-                { "vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss") },
-                { "vnp_ExpireDate", DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss") }, 
-                { "vnp_CurrCode", "VND" },
-                { "vnp_IpAddr", ip },
-                { "vnp_Locale", "vn" },
-                { "vnp_OrderInfo", $"Thanh toan don hang thoi gian: {DateTime.Now:yyyy-MM-dd HH:mm:ss}" },
-                { "vnp_OrderType", "topup" },
-                { "vnp_ReturnUrl", vnp_ReturnUrl },
-                { "vnp_TxnRef", orderId }
-            };
+                {
+                    { "vnp_Version", "2.1.0" },         // API version theo khuyến nghị VNPAY :contentReference[oaicite:0]{index=0}
+                    { "vnp_Command", "pay" },
+                    { "vnp_TmnCode", vnp_TmnCode },
+                    { "vnp_Amount", ((long)(amount * 100)).ToString() }, // nhân ×100 theo hướng dẫn của VNPAY :contentReference[oaicite:1]{index=1}
+                    { "vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss") },
+                    { "vnp_ExpireDate", DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss") },
+                    { "vnp_CurrCode", "VND" },
+                    { "vnp_IpAddr", ip },
+                    { "vnp_Locale", "vn" },
+                    { "vnp_OrderInfo", $"Thanh toan don hang thoi gian: {DateTime.Now:yyyy-MM-dd HH:mm:ss}" },
+                    { "vnp_OrderType", "topup" },
+                    { "vnp_ReturnUrl", vnp_ReturnUrl },
+                    { "vnp_TxnRef", orderId }
+                };
 
-            // 🔹 Tạo chuỗi rawData để ký
-            var rawData = string.Join("&", vnpParams.Select(x => $"{x.Key}={x.Value}"));
-            var secureHash = HmacSHA512(vnp_HashSecret, rawData);
+                        // Tạo chuỗi rawData để ký (KHÔNG encode)
+                        string rawData = string.Join("&", vnpParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
 
-            // 🔹 Encode và ghép URL thanh toán
-            var query = string.Join("&", vnpParams.Select(x => $"{x.Key}={HttpUtility.UrlEncode(x.Value)}"));
-            var paymentUrl = $"{vnp_Url}?{query}&vnp_SecureHash={secureHash}";
+                        // Tính secure hash với HMACSHA512
+                        string vnp_SecureHash = ComputeHmacSha512(vnp_HashSecret, rawData);
 
-            return Task.FromResult(paymentUrl);
-        }
+                        // Tạo query string để redirect (encode từng tham số)
+                        string queryString = string.Join("&", vnpParams.Select(kvp =>
+                            $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"
+                        ));
+
+                        // Ghép URL cuối cùng
+                        string paymentUrl = $"{vnp_Url}?{queryString}&vnp_SecureHash={vnp_SecureHash}";
+
+                        return Task.FromResult(paymentUrl);
+                    }
+
+                    private static string ComputeHmacSha512(string key, string data)
+                    {
+                        using (var hmac = new System.Security.Cryptography.HMACSHA512(System.Text.Encoding.UTF8.GetBytes(key)))
+                        {
+                            byte[] hashValue = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
+                            var sb = new System.Text.StringBuilder();
+                            foreach (var b in hashValue)
+                            {
+                                sb.Append(b.ToString("x2"));
+                            }
+                            return sb.ToString();
+                        }
+                    }
 
 
         public static string HmacSHA512(string key, string input)
