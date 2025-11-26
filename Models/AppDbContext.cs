@@ -15,7 +15,7 @@ public partial class AppDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Baithidanop> Baithidanops { get; set; }
+    public virtual DbSet<Baithi> Baithis { get; set; }
 
     public virtual DbSet<Baiviet> Baiviets { get; set; }
 
@@ -39,13 +39,13 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Dapan> Dapans { get; set; }
 
-    public virtual DbSet<Deluyen> Deluyens { get; set; }
-
     public virtual DbSet<Diemdanh> Diemdanhs { get; set; }
 
     public virtual DbSet<DkyChungchi> DkyChungchis { get; set; }
 
     public virtual DbSet<Giaovien> Giaoviens { get; set; }
+
+    public virtual DbSet<Hoadon> Hoadons { get; set; }
 
     public virtual DbSet<Hocvien> Hocviens { get; set; }
 
@@ -69,8 +69,6 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Tailieu> Tailieus { get; set; }
 
-    public virtual DbSet<Thanhtoan> Thanhtoans { get; set; }
-
     public virtual DbSet<Vaitro> Vaitros { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -79,34 +77,13 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Baithidanop>(entity =>
+        modelBuilder.Entity<Baithi>(entity =>
         {
-            entity.HasOne(d => d.IdDeluyenNavigation).WithMany(p => p.Baithidanops)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BAITHIDANOP_DELUYEN");
+            entity.HasKey(e => e.IdBaithi).HasName("PK__BAITHI__949751C41EF95FE4");
 
-            entity.HasOne(d => d.IdHocvienNavigation).WithMany(p => p.Baithidanops)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BAITHIDANOP_HOCVIEN");
+            entity.Property(e => e.Ngaytao).HasDefaultValueSql("(getdate())");
 
-            entity.HasMany(d => d.IdCauhois).WithMany(p => p.IdBaithis)
-                .UsingEntity<Dictionary<string, object>>(
-                    "BaithiBailam",
-                    r => r.HasOne<Cauhoi>().WithMany()
-                        .HasForeignKey("IdCauhoi")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_BAITHI_BAILAM_CAUHOI"),
-                    l => l.HasOne<Baithidanop>().WithMany()
-                        .HasForeignKey("IdBaithi")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_BAITHI_BAILAM_BAITHIDANOP"),
-                    j =>
-                    {
-                        j.HasKey("IdBaithi", "IdCauhoi");
-                        j.ToTable("BAITHI_BAILAM");
-                        j.IndexerProperty<int>("IdBaithi").HasColumnName("ID_BAITHI");
-                        j.IndexerProperty<int>("IdCauhoi").HasColumnName("ID_CAUHOI");
-                    });
+            entity.HasOne(d => d.IdLopNavigation).WithMany(p => p.Baithis).HasConstraintName("FK_BAITHI_LOPHOC");
         });
 
         modelBuilder.Entity<Baiviet>(entity =>
@@ -144,6 +121,8 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.IdCauhoi).HasName("PK__CAUHOI__674FD6FC40D59B93");
 
             entity.Property(e => e.Dapandung).IsFixedLength();
+
+            entity.HasOne(d => d.IdBaithiNavigation).WithMany(p => p.Cauhois).HasConstraintName("FK_CAUHOI_BAITHI");
         });
 
         modelBuilder.Entity<Chatmessage>(entity =>
@@ -222,44 +201,6 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("FK_DAPAN_CAUHOI");
         });
 
-        modelBuilder.Entity<Deluyen>(entity =>
-        {
-            entity.HasKey(e => e.IdDeluyen).HasName("PK__DELUYEN__616F6068894A6989");
-
-            entity.Property(e => e.Ngaytaode).HasDefaultValueSql("(getdate())");
-
-            entity.HasOne(d => d.IdLoaideNavigation).WithMany(p => p.Deluyens)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_DELUYEN_LOAIDE");
-
-            entity.HasOne(d => d.IdLophocNavigation).WithMany(p => p.Deluyens)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_DELUYEN_LOPHOC");
-
-            entity.HasOne(d => d.IdTkNavigation).WithMany(p => p.Deluyens)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_DELUYEN_TAIKHOAN");
-
-            entity.HasMany(d => d.IdCauhois).WithMany(p => p.IdDeluyens)
-                .UsingEntity<Dictionary<string, object>>(
-                    "DeluyenCauhoi",
-                    r => r.HasOne<Cauhoi>().WithMany()
-                        .HasForeignKey("IdCauhoi")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_DELUYEN_CAUHOI_CAUHOI"),
-                    l => l.HasOne<Deluyen>().WithMany()
-                        .HasForeignKey("IdDeluyen")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_DELUYEN_CAUHOI_DELUYEN"),
-                    j =>
-                    {
-                        j.HasKey("IdDeluyen", "IdCauhoi");
-                        j.ToTable("DELUYEN_CAUHOI");
-                        j.IndexerProperty<int>("IdDeluyen").HasColumnName("ID_DELUYEN");
-                        j.IndexerProperty<int>("IdCauhoi").HasColumnName("ID_CAUHOI");
-                    });
-        });
-
         modelBuilder.Entity<Diemdanh>(entity =>
         {
             entity.HasOne(d => d.IdHvNavigation).WithMany(p => p.Diemdanhs)
@@ -293,6 +234,22 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.IdTaikhoanNavigation).WithOne(p => p.Giaovien)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_GIAOVIEN_TAIKHOAN");
+        });
+
+        modelBuilder.Entity<Hoadon>(entity =>
+        {
+            entity.HasKey(e => e.Idhoadon).HasName("PK__HOADON__ADBC99C6FE602DBA");
+
+            entity.Property(e => e.Ngaytao).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Trangthai).HasDefaultValue("CHUATHANHTOAN");
+
+            entity.HasOne(d => d.IdHocvienNavigation).WithMany(p => p.Hoadons)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HOADON_HOCVIEN");
+
+            entity.HasOne(d => d.IdLophocNavigation).WithMany(p => p.Hoadons)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HOADON_LOPHOC");
         });
 
         modelBuilder.Entity<Hocvien>(entity =>
@@ -329,6 +286,8 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.IdLhct).HasName("PK__LICHHOC___9B10EE78F4448DDB");
 
+            entity.HasOne(d => d.IdGiaovienNavigation).WithMany(p => p.LichhocChitiets).HasConstraintName("FK_LHCT_GV");
+
             entity.HasOne(d => d.IdLichhocNavigation).WithMany(p => p.LichhocChitiets)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_LHCT_LICHHOC");
@@ -347,6 +306,8 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Lophoc>(entity =>
         {
             entity.HasKey(e => e.IdLophoc).HasName("PK__LOPHOC__06CC5F7E2B71FA9D");
+
+            entity.HasOne(d => d.IdGvChinhNavigation).WithMany(p => p.Lophocs).HasConstraintName("FK_LH_GV");
 
             entity.HasOne(d => d.IdKhoahocNavigation).WithMany(p => p.Lophocs)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -418,15 +379,6 @@ public partial class AppDbContext : DbContext
                         j.IndexerProperty<int>("IdTailieu").HasColumnName("ID_TAILIEU");
                         j.IndexerProperty<int>("IdLophoc").HasColumnName("ID_LOPHOC");
                     });
-        });
-
-        modelBuilder.Entity<Thanhtoan>(entity =>
-        {
-            entity.HasKey(e => e.IdThanhtoan).HasName("PK__THANHTOA__B8F0855B11B24013");
-
-            entity.Property(e => e.Ngaytt).HasDefaultValueSql("(getdate())");
-
-            entity.HasOne(d => d.IdDangkyNavigation).WithMany(p => p.Thanhtoans).HasConstraintName("FK__THANHTOAN__ID_DA__0880433F");
         });
 
         modelBuilder.Entity<Vaitro>(entity =>

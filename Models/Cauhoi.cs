@@ -22,14 +22,13 @@ public partial class Cauhoi
     [Unicode(false)]
     public string? Dapandung { get; set; }
 
+    [Column("ID_BAITHI")]
+    public int? IdBaithi { get; set; }
+
     [InverseProperty("IdCauhoiNavigation")]
     public virtual ICollection<Dapan> Dapans { get; set; } = new List<Dapan>();
 
-    [ForeignKey("IdCauhoi")]
-    [InverseProperty("IdCauhois")]
-    public virtual ICollection<Baithidanop> IdBaithis { get; set; } = new List<Baithidanop>();
-
-    [ForeignKey("IdCauhoi")]
-    [InverseProperty("IdCauhois")]
-    public virtual ICollection<Deluyen> IdDeluyens { get; set; } = new List<Deluyen>();
+    [ForeignKey("IdBaithi")]
+    [InverseProperty("Cauhois")]
+    public virtual Baithi? IdBaithiNavigation { get; set; }
 }

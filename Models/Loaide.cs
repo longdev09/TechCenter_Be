@@ -16,7 +16,4 @@ public partial class Loaide
     [Column("TENLOAIDE")]
     [StringLength(20)]
     public string Tenloaide { get; set; } = null!;
-
-    [InverseProperty("IdLoaideNavigation")]
-    public virtual ICollection<Deluyen> Deluyens { get; set; } = new List<Deluyen>();
 }

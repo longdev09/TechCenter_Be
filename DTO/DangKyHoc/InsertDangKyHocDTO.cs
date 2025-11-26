@@ -1,4 +1,5 @@
-﻿using TechCenter.DTO.ThanhToan;
+﻿using TechCenter.DTO.HoaDon;
+using TechCenter.DTO.ThanhToan;
 
 namespace TechCenter.DTO.DangKyHoc
 {
@@ -9,7 +10,8 @@ namespace TechCenter.DTO.DangKyHoc
         public DateTime ngayDangKy { get; set; }
         public float? soTienGiam { get; set; }
         public float? tongTien { get; set; }
-        public InsertThanhToanDTO? thanhToanDTO { get; set; }
+        public InsertHoaDonDTO? InsertHoaDonDTO { get; set; }
+
 
     }
 }

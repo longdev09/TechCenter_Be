@@ -23,10 +23,6 @@ public partial class Thanhtoan
     [StringLength(50)]
     public string? Phuongthuctt { get; set; }
 
-    [Column("MAGIAODICH")]
-    [StringLength(100)]
-    public string? Magiaodich { get; set; }
-
     [Column("TRANGTHAI")]
     [StringLength(50)]
     public string? Trangthai { get; set; }

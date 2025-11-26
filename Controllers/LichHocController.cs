@@ -20,7 +20,7 @@ namespace TechCenter.Controllers
 
 
         // GET: api/LichHoc/ByHocVienTheoTuan?idHocVien=1&tuNgay=2025-01-01&denNgay=2025-01-07
-        [HttpGet("ByHocVienTheoTuan")]
+        [HttpGet("GetLichHocChiTietByHocVienTheoTuan")]
         public async Task<IActionResult> GetLichHocChiTietByHocVienTheoTuan([FromQuery] int idHocVien, [FromQuery] string tuNgay, [FromQuery] string denNgay)
         {
             if (idHocVien <= 0)

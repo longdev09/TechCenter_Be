@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Server_WebBanKhoaHoc.ModelsVnPay;
 using TechCenter.DTO.ThanhToan;
+using TechCenter.Helpers;
 using TechCenter.Models;
 using TechCenter.Services.Interface;
 
@@ -13,51 +15,41 @@ namespace TechCenter.Services
             _context = context;
         }
 
-        public async Task<List<Thanhtoan>> GetAllAsync()
+        // thanh toan khoa hoc vnpay
+        public async Task<string> CreateThanhToanKhoaHocAsync(long tienThanhToan, int idHv)
         {
-            return await _context.Thanhtoans.AsNoTracking().ToListAsync();
-        }
+            var maHd  = GenerateMaHoaDon.GenerateMaHD(idHv);
+            string vnp_Returnurl = "http://localhost:5173/payresult";
+            string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+            string vnp_TmnCode = "M09BPYD2";
+            string vnp_HashSecret = "W8WYMTMFQAK29TY6GLWCV3LSJGBG2OB1";
 
-        public async Task<Thanhtoan?> GetByIdAsync(int id)
-        {
-            return await _context.Thanhtoans.FindAsync(id);
-        }
+            OrderInfo order = new OrderInfo();
+            order.OrderId = DateTime.Now.Ticks; // Giả lập mã giao dịch hệ thống merchant gửi sang VNPAY
+            order.Amount = tienThanhToan; // Giả lập số tiền thanh toán hệ thống merchant gửi sang VNPAY 100,000 VND
+            order.Status = "0"; //0: Trạng thái thanh toán "chờ thanh toán" hoặc "Pending" khởi tạo giao dịch chưa có IPN
+            order.CreatedDate = DateTime.Now;
 
-        public async Task<Thanhtoan> CreateAsync(InsertThanhToanDTO dto)
-        {
-            var entity = new Thanhtoan
-            {
-                IdDangky = dto.IdDangky,
-                Sotien = dto.Sotien,
-                Phuongthuctt = dto.Phuongthuctt,
-                Magiaodich = dto.Magiaodich,
-                Trangthai = dto.Trangthai,
-                Ngaytt = dto.Ngaytt ?? DateTime.Now,
-                Noidung = dto.Noidung
-            };
 
-            _context.Thanhtoans.Add(entity);
-            await _context.SaveChangesAsync();
-            return entity;
-        }
+            VnPayLibrary vnpay = new VnPayLibrary();
+            vnpay.AddRequestData("vnp_Version", VnPayLibrary.VERSION);
+            vnpay.AddRequestData("vnp_Command", "pay");
+            vnpay.AddRequestData("vnp_TmnCode", vnp_TmnCode);
+            vnpay.AddRequestData("vnp_Amount", (order.Amount * 100).ToString()); //Số tiền thanh toán. Số tiền không mang các ký tự phân tách thập phân, phần nghìn, ký tự tiền tệ. Để gửi số tiền thanh toán là 100,000 VND (một trăm nghìn VNĐ) thì merchant cần nhân thêm 100 lần (khử phần thập phân), sau đó gửi sang VNPAY là: 10000000
 
-        public async Task<bool> UpdateAsync(Thanhtoan thanhtoan)
-        {
-            var existing = await _context.Thanhtoans.FindAsync(thanhtoan.IdThanhtoan);
-            if (existing == null) return false;
+            vnpay.AddRequestData("vnp_CreateDate", order.CreatedDate.ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_CurrCode", "VND");
+            vnpay.AddRequestData("vnp_IpAddr", "192.168.56.1");
+            vnpay.AddRequestData("vnp_Locale", "vn");
 
-            _context.Entry(existing).CurrentValues.SetValues(thanhtoan);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+            vnpay.AddRequestData("vnp_OrderInfo", maHd + "," + tienThanhToan);
+            vnpay.AddRequestData("vnp_OrderType", "other"); //default value: other
 
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var existing = await _context.Thanhtoans.FindAsync(id);
-            if (existing == null) return false;
-            _context.Thanhtoans.Remove(existing);
-            await _context.SaveChangesAsync();
-            return true;
+            vnpay.AddRequestData("vnp_ReturnUrl", vnp_Returnurl);
+            vnpay.AddRequestData("vnp_TxnRef", order.OrderId.ToString()); // Mã tham chiếu của giao dịch tại hệ thống của merchant. Mã này là duy 
+            string paymentUrl = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
+            //log.InfoFormat("VNPAY URL: {0}", paymentUrl);
+            return paymentUrl;
         }
     }
 }

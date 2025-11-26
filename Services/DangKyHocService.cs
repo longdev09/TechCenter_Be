@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TechCenter.DTO.DangKyHoc;
+using TechCenter.DTO.HoaDon;
 using TechCenter.DTO.ThanhToan;
 using TechCenter.Models;
 using TechCenter.Services.Interface;
@@ -9,11 +10,11 @@ namespace TechCenter.Services
     public class DangKyHocService : IDangKyHocService
     {
         private readonly AppDbContext _context;
-        private readonly IThanhToanService _thanhToanService;
-        public DangKyHocService(AppDbContext context, IThanhToanService thanhToanService)
+        private readonly IHoaDonService _hoaDonService;
+        public DangKyHocService(AppDbContext context, IHoaDonService hoaDonService)
         {
             _context = context;
-            _thanhToanService = thanhToanService;
+           _hoaDonService = hoaDonService;
         }
 
         // Học viên đăng ký học khóa học
@@ -32,11 +33,18 @@ namespace TechCenter.Services
             _context.Dangkylops.Add(entity);
             await _context.SaveChangesAsync();
 
-            if (dto.thanhToanDTO != null)
+            if (dto.InsertHoaDonDTO != null)
             {
-                // gán IdDangky trong DTO thanh toán bằng IdDangky vừa tạo
-                dto.thanhToanDTO.IdDangky = entity.IdDangky;
-                await _thanhToanService.CreateAsync(dto.thanhToanDTO);
+                
+                await _hoaDonService.CreateAsync(new InsertHoaDonDTO
+                {
+                   maHd = dto.InsertHoaDonDTO.maHd,
+                   IdHocvien = dto.idHV,
+                   IdLophoc = dto.idLopHoc,
+                   Tongtien = dto.InsertHoaDonDTO.Tongtien,
+                   Ghichu = dto.InsertHoaDonDTO.Ghichu,
+                   Trangthai = dto.InsertHoaDonDTO.Trangthai
+                });
             }
 
             return entity;

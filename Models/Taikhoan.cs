@@ -45,9 +45,6 @@ public partial class Taikhoan
     [InverseProperty("IdTaikhoanNavigation")]
     public virtual ICollection<Chatsession> Chatsessions { get; set; } = new List<Chatsession>();
 
-    [InverseProperty("IdTkNavigation")]
-    public virtual ICollection<Deluyen> Deluyens { get; set; } = new List<Deluyen>();
-
     [InverseProperty("IdTaikhoanNavigation")]
     public virtual Giaovien? Giaovien { get; set; }
 

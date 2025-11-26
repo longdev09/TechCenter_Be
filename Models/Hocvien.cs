@@ -36,9 +36,6 @@ public partial class Hocvien
     public string? AnhHv { get; set; }
 
     [InverseProperty("IdHocvienNavigation")]
-    public virtual ICollection<Baithidanop> Baithidanops { get; set; } = new List<Baithidanop>();
-
-    [InverseProperty("IdHocvienNavigation")]
     public virtual ICollection<Baocaohoctap> Baocaohoctaps { get; set; } = new List<Baocaohoctap>();
 
     [InverseProperty("IdHvNavigation")]
@@ -52,6 +49,9 @@ public partial class Hocvien
 
     [InverseProperty("IdHocvienNavigation")]
     public virtual ICollection<DkyChungchi> DkyChungchis { get; set; } = new List<DkyChungchi>();
+
+    [InverseProperty("IdHocvienNavigation")]
+    public virtual ICollection<Hoadon> Hoadons { get; set; } = new List<Hoadon>();
 
     [ForeignKey("IdTaikhoan")]
     [InverseProperty("Hocvien")]
