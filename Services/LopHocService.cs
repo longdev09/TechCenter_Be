@@ -89,6 +89,27 @@ namespace TechCenter.Services
             return result;
         }
 
+        public async Task<List<LopHocForGiaoVienDTO>> GetLopHocByGiaoVienAsync(int idGiaoVien)
+        {
+            var query = from l in _context.Lophocs.AsNoTracking()
+                        join pc in _context.Phancongs.AsNoTracking() on l.IdLophoc equals pc.IdLophoc into pcj
+                        from pc in pcj.DefaultIfEmpty()
+                        join kh in _context.Khoahocs.AsNoTracking() on l.IdKhoahoc equals kh.IdKhoahoc into khj
+                        from kh in khj.DefaultIfEmpty()
+                        where pc != null && pc.IdGiaovien == idGiaoVien
+                        select new LopHocForGiaoVienDTO
+                        {
+                            IdLophoc = l.IdLophoc,
+                            IdKhoahoc = l.IdKhoahoc,
+                            TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null,
+                            IdGvChinh = l.IdGvChinh,
+                            IdGiaoVienPhanCong = pc != null ? (int?)pc.IdGiaovien : null,
+                            NgayKhaiGiang = l.Ngaykhaigiang != default ? l.Ngaykhaigiang.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null,
+                            SiSoHienTai = l.Sisohientai,
+                            SiSoToiDa = l.Sisotoida
+                        };
 
+            return await query.ToListAsync();
+        }
     }
 }

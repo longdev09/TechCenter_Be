@@ -27,6 +27,16 @@ namespace TechCenter.Controllers
         }
 
 
+        [HttpPost("CreateTaiKhoanGiaoVien")]
+        public async Task<IActionResult> CreateTaiKhoanGiaoVien([FromBody] TaoTaiKhoanDTO taoTaiKhoanDTO)
+        {
+
+            var createdAccount = await _taiKhoanService.CreateTaiKhoan(taoTaiKhoanDTO.Tendangnhap, taoTaiKhoanDTO.Matkhau, taoTaiKhoanDTO.Email, 1, taoTaiKhoanDTO.Hoten);
+            return Ok(BaseResponse<object>.SuccessCreated(createdAccount));
+
+        }
+
+
 
 
 

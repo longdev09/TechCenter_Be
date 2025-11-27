@@ -33,6 +33,8 @@ builder.Services.AddScoped<ILichHocService, LichHocService>();
 builder.Services.AddScoped<ITaiLieuService, TaiLieuService>();
 builder.Services.AddScoped<IUploadAnhService, UploadAnhService>();
 builder.Services.AddScoped<IHoaDonService, HoaDonService>();
+builder.Services.AddScoped<IBaiThiService, BaiThiService>();
+builder.Services.AddScoped<IGiaoVienService, GiaoVienService>();
 
 
 

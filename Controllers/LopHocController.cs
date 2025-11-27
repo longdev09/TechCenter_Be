@@ -25,6 +25,14 @@ namespace TechCenter.Controllers
             return Ok(BaseResponse<object>.SuccessFetched(classes));
         }
 
-       
+
+        // get danh sách lớp theo by id giaoVien
+
+        [HttpGet("GetLopHocByGiaoVien")]
+        public async Task<IActionResult> GetLopHocByGiaoVien(int idGiaoVien)
+        {
+            var classes = await _lopHocService.GetLopHocByGiaoVienAsync(idGiaoVien);
+            return Ok(BaseResponse<object>.SuccessFetched(classes));
+        }
     }
 }

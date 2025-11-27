@@ -59,6 +59,18 @@ namespace TechCenter.Services
                 });
             }
 
+            if(vaiTro == 1)
+            {
+                // thêm thông tin giáo viên
+                var giaoVien = new Giaovien
+                {
+                    Hotengv = tenNguoiDung,
+                    IdTaikhoan = idTaiKhoan
+                };
+                _context.Giaoviens.Add(giaoVien);
+                await _context.SaveChangesAsync();
+            }
+
             // Sinh token JWT
             var token = GenerateToken(taiKhoan);
 

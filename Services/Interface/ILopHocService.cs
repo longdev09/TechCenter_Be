@@ -6,5 +6,6 @@ namespace TechCenter.Services.Interface
     public interface ILopHocService
     {
         Task<List<LopHocByKhoaHocDTO>> GetLopHocByIdKhoaHoc(int idKhoaHoc);
+        Task<List<LopHocForGiaoVienDTO>> GetLopHocByGiaoVienAsync(int idGiaoVien);
     }
 }
