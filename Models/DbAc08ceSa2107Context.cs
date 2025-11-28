@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TechCenter.Models;
 
-public partial class AppDbContext : DbContext
+public partial class DbAc08ceSa2107Context : DbContext
 {
-    public AppDbContext()
+    public DbAc08ceSa2107Context()
     {
     }
 
-    public AppDbContext(DbContextOptions<AppDbContext> options)
+    public DbAc08ceSa2107Context(DbContextOptions<DbAc08ceSa2107Context> options)
         : base(options)
     {
     }
