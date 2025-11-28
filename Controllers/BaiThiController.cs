@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TechCenter.DTO.BaiThi;
+using TechCenter.Middleware;
 using TechCenter.Services.Interface;
 
 namespace TechCenter.Controllers
@@ -19,6 +21,13 @@ namespace TechCenter.Controllers
         {
             var result = await baiThiService.GetBaithiByLopIdAsync(idLop);
             return Ok(result);
+        }
+
+        [HttpPost("CreateBaiThi")]
+        public async Task<IActionResult> CreateBaiThi([FromBody] InsertBaiThiDTO dto)
+        {
+            var newBaiThiId = await baiThiService.InsertBaiThiAsync(dto);
+            return Ok(BaseResponse<object>.SuccessCreated(newBaiThiId));
         }
     }
 }

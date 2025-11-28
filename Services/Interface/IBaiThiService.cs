@@ -7,5 +7,7 @@ namespace TechCenter.Services.Interface
     public interface IBaiThiService
     {
         Task<List<BaithiWithKhoaDTO>> GetBaithiByLopIdAsync(int idLop);
+
+        Task<int> InsertBaiThiAsync(InsertBaiThiDTO dto);
     }
 }
