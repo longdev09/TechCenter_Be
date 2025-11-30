@@ -28,11 +28,10 @@ public partial class Hoadon
     public DateTime? Ngaytao { get; set; }
 
     [Column("TONGTIEN", TypeName = "decimal(18, 2)")]
-    public decimal Tongtien { get; set; }
+    public decimal? Tongtien { get; set; }
 
     [Column("TRANGTHAI")]
-    [StringLength(20)]
-    [Unicode(false)]
+    [StringLength(50)]
     public string? Trangthai { get; set; }
 
     [Column("GHICHU")]

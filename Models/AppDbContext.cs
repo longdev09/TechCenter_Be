@@ -37,6 +37,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Danhgiakh> Danhgiakhs { get; set; }
 
+    public virtual DbSet<Dapantracnghiem> Dapantracnghiems { get; set; }
+
     public virtual DbSet<Diemdanh> Diemdanhs { get; set; }
 
     public virtual DbSet<DkyChungchi> DkyChungchis { get; set; }
@@ -123,8 +125,6 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.IdCauhoi).HasName("PK__CAUHOI__674FD6FC40D59B93");
 
-            entity.Property(e => e.Dapandung).IsFixedLength();
-
             entity.HasOne(d => d.IdBaithiNavigation).WithMany(p => p.Cauhois).HasConstraintName("FK_CAUHOI_BAITHI");
 
             entity.HasOne(d => d.IdLoaicauhoiNavigation).WithMany(p => p.Cauhois).HasConstraintName("FK_CAUHOI_LOAICAUHOI");
@@ -197,6 +197,17 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.IdKhoahocNavigation).WithMany(p => p.Danhgiakhs)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_DANHGIAKH_KHOAHOC");
+        });
+
+        modelBuilder.Entity<Dapantracnghiem>(entity =>
+        {
+            entity.HasKey(e => e.IdDapan).HasName("PK__DAPANTRA__ED9B1D734476980D");
+
+            entity.Property(e => e.Isdung).HasDefaultValue(false);
+
+            entity.HasOne(d => d.IdCauhoiNavigation).WithMany(p => p.Dapantracnghiems)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__DAPANTRAC__ID_CA__0169315C");
         });
 
         modelBuilder.Entity<Diemdanh>(entity =>
@@ -283,8 +294,6 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<LichhocChitiet>(entity =>
         {
             entity.HasKey(e => e.IdLhct).HasName("PK__LICHHOC___9B10EE78F4448DDB");
-
-            entity.HasOne(d => d.IdGiaovienNavigation).WithMany(p => p.LichhocChitiets).HasConstraintName("FK_LHCT_GV");
 
             entity.HasOne(d => d.IdLichhocNavigation).WithMany(p => p.LichhocChitiets)
                 .OnDelete(DeleteBehavior.ClientSetNull)

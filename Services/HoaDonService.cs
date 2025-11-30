@@ -25,7 +25,7 @@ namespace TechCenter.Services
                     IdHocvien = h.IdHocvien,
                     IdLophoc = h.IdLophoc,
                     Ngaytao = h.Ngaytao,
-                    Tongtien = h.Tongtien,
+                   
                     Trangthai = h.Trangthai,
                     Ghichu = h.Ghichu,
                     TenHocVien = h.IdHocvienNavigation != null ? h.IdHocvienNavigation.Hotenhv : null
@@ -45,7 +45,7 @@ namespace TechCenter.Services
                     IdHocvien = h.IdHocvien,
                     IdLophoc = h.IdLophoc,
                     Ngaytao = h.Ngaytao,
-                    Tongtien = h.Tongtien,
+                  
                     Trangthai = h.Trangthai,
                     Ghichu = h.Ghichu,
                     TenHocVien = h.IdHocvienNavigation != null ? h.IdHocvienNavigation.Hotenhv : null
@@ -96,7 +96,7 @@ namespace TechCenter.Services
                     IdHocvien = hd.IdHocvien,
                     IdLophoc = hd.IdLophoc,
                     Ngaytao = hd.Ngaytao,
-                    Tongtien = hd.Tongtien,
+                 
                     Trangthai = hd.Trangthai,
                     Ghichu = hd.Ghichu,
                     TenHocVien = hd.IdHocvienNavigation != null ? hd.IdHocvienNavigation.Hotenhv : null,

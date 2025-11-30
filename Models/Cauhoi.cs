@@ -13,20 +13,27 @@ public partial class Cauhoi
     [Column("ID_CAUHOI")]
     public int IdCauhoi { get; set; }
 
-    [Column("CAUHOI")]
-    [StringLength(255)]
-    public string Cauhoi1 { get; set; } = null!;
-
-    [Column("DAPANDUNG")]
-    [StringLength(1)]
-    [Unicode(false)]
-    public string? Dapandung { get; set; }
-
     [Column("ID_BAITHI")]
     public int? IdBaithi { get; set; }
 
     [Column("ID_LOAICAUHOI")]
     public int? IdLoaicauhoi { get; set; }
+
+    [Column("STT")]
+    public int? Stt { get; set; }
+
+    [Column("DIEM", TypeName = "decimal(5, 2)")]
+    public decimal? Diem { get; set; }
+
+    [Column("MUCDO")]
+    [StringLength(255)]
+    public string? Mucdo { get; set; }
+
+    [Column("CAUHOI")]
+    public string? Cauhoi1 { get; set; }
+
+    [InverseProperty("IdCauhoiNavigation")]
+    public virtual ICollection<Dapantracnghiem> Dapantracnghiems { get; set; } = new List<Dapantracnghiem>();
 
     [ForeignKey("IdBaithi")]
     [InverseProperty("Cauhois")]
