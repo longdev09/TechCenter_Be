@@ -62,7 +62,11 @@ namespace TechCenter.Services
             return dto;
         }
 
-       
+
+     
+
+
+
 
         public async Task<LoaiCauHoiDTO> GetLoaiCauHoiByIdAsync(int id)
         {
@@ -151,5 +155,28 @@ namespace TechCenter.Services
             return insertedDtos;
         }
 
+        public async Task<List<CauHoiByIdByBaiThiDTO>> GetCauHoiByBaiThiAsync(int idBaiThi)
+        {
+            var query = from ch in _context.Cauhois.AsNoTracking()
+                        join lb in _context.Loaicauhois.AsNoTracking() on ch.IdLoaicauhoi equals lb.IdLoaicauhoi into lbj
+                        from lb in lbj.DefaultIfEmpty()
+                        where ch.IdBaithi == idBaiThi
+                        orderby ch.Stt
+                        select new CauHoiByIdByBaiThiDTO
+                        {
+                            IdCauHoi = ch.IdCauhoi,
+                            IdBaiThi = ch.IdBaithi,
+                            IdLoaiCauHoi = ch.IdLoaicauhoi,
+                            LoaiCauHoi = lb != null ? lb.TenLoai : null,
+                            Stt = ch.Stt,
+                            Diem = ch.Diem,
+                            MucDo = ch.Mucdo,
+                            Cauhoi = ch.Cauhoi1
+                        };
+
+            return await query.ToListAsync();
+        }
+
+       
     }
 }

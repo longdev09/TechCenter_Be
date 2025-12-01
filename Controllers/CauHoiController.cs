@@ -24,6 +24,13 @@ namespace TechCenter.Controllers
             return Ok(BaseResponse<object>.SuccessFetched(result));
         }
 
+        [HttpGet("GetAllCauHoiByIdBaiThi")]
+        public async Task<IActionResult> GetAllCauHoiByIdBaiThi(int idBaiThi)
+        {
+            var result = await cauHoiService.GetCauHoiByBaiThiAsync(idBaiThi);
+            return Ok(BaseResponse<object>.SuccessFetched(result));
+        }
+
         [HttpGet("GetLoaiCauHoiById/{id}")]
         public async Task<IActionResult> GetLoaiCauHoiById(int id)
         {
@@ -55,6 +62,8 @@ namespace TechCenter.Controllers
         [HttpPost("InsertDapAn")]
         public async Task<IActionResult> InsertDapAn([FromBody] List<InsertDapAnDTO> dtos)
         {
+
+
             var result = await cauHoiService.InsertDapAnAsync(dtos);
             return Ok(BaseResponse<object>.SuccessCreated(result));
         }
