@@ -23,6 +23,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Capdokhoahoc> Capdokhoahocs { get; set; }
 
+    public virtual DbSet<CauHoiCode> CauHoiCodes { get; set; }
+
     public virtual DbSet<Cauhoi> Cauhois { get; set; }
 
     public virtual DbSet<Chatmessage> Chatmessages { get; set; }
@@ -121,6 +123,17 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.TrangThai).HasDefaultValue(true);
         });
 
+        modelBuilder.Entity<CauHoiCode>(entity =>
+        {
+            entity.HasKey(e => e.IdCauHoi).HasName("PK__CauHoiCo__7F0B00FF513BF79E");
+
+            entity.Property(e => e.IdCauHoi).ValueGeneratedNever();
+
+            entity.HasOne(d => d.IdCauHoiNavigation).WithOne(p => p.CauHoiCode)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CauHoiCod__IdCau__16644E42");
+        });
+
         modelBuilder.Entity<Cauhoi>(entity =>
         {
             entity.HasKey(e => e.IdCauhoi).HasName("PK__CAUHOI__674FD6FC40D59B93");
@@ -162,6 +175,8 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Chungchi>(entity =>
         {
             entity.HasKey(e => e.IdChungchi).HasName("PK__CHUNGCHI__92727E22041577B0");
+
+            entity.HasOne(d => d.IdKhoahocNavigation).WithMany(p => p.Chungchis).HasConstraintName("FK_CC_KH");
         });
 
         modelBuilder.Entity<Ctuudai>(entity =>

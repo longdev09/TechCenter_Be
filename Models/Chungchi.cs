@@ -21,6 +21,13 @@ public partial class Chungchi
     [Column("MOTACC")]
     public string? Motacc { get; set; }
 
+    [Column("ID_KHOAHOC")]
+    public int? IdKhoahoc { get; set; }
+
     [InverseProperty("IdChungchiNavigation")]
     public virtual ICollection<DkyChungchi> DkyChungchis { get; set; } = new List<DkyChungchi>();
+
+    [ForeignKey("IdKhoahoc")]
+    [InverseProperty("Chungchis")]
+    public virtual Khoahoc? IdKhoahocNavigation { get; set; }
 }

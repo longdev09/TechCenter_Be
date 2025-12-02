@@ -177,6 +177,34 @@ namespace TechCenter.Services
             return await query.ToListAsync();
         }
 
-       
+
+
+        public async Task<InsertCauHoiCodeDTO> InsertCauHoiCodeAsync(InsertCauHoiCodeDTO dto)
+        {
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (!dto.IdCauHoi.HasValue) throw new ArgumentException("IdCauHoi is required", nameof(dto));
+
+            var existing = await _context.CauHoiCodes.FindAsync(dto.IdCauHoi.Value);
+            if (existing != null)
+            {
+                existing.CodeMau = dto.CodeMau;
+                existing.NgonNgu = dto.NgonNgu;
+                _context.CauHoiCodes.Update(existing);
+                await _context.SaveChangesAsync();
+                dto.IdCauHoi = existing.IdCauHoi; // preserve
+                return dto;
+            }
+
+            var entity = new CauHoiCode
+            {
+                IdCauHoi = dto.IdCauHoi.Value,
+                CodeMau = dto.CodeMau,
+                NgonNgu = dto.NgonNgu
+            };
+
+            _context.CauHoiCodes.Add(entity);
+            await _context.SaveChangesAsync();
+            return dto;
+        }
     }
 }

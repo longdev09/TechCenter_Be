@@ -50,6 +50,9 @@ public partial class Khoahoc
     public virtual ICollection<Baocaohoctap> Baocaohoctaps { get; set; } = new List<Baocaohoctap>();
 
     [InverseProperty("IdKhoahocNavigation")]
+    public virtual ICollection<Chungchi> Chungchis { get; set; } = new List<Chungchi>();
+
+    [InverseProperty("IdKhoahocNavigation")]
     public virtual ICollection<Danhgiakh> Danhgiakhs { get; set; } = new List<Danhgiakh>();
 
     [ForeignKey("IdLoaikynang")]

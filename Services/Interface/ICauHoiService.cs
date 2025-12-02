@@ -11,5 +11,7 @@ namespace TechCenter.Services.Interface
         Task<InsertDapAnDTO> InsertDapAnAsync(InsertDapAnDTO dto);
         Task<List<InsertDapAnDTO>> InsertDapAnAsync(List<InsertDapAnDTO> dtos);
         Task<List<CauHoiByIdByBaiThiDTO>> GetCauHoiByBaiThiAsync(int idBaiThi);
+        Task<InsertCauHoiCodeDTO> InsertCauHoiCodeAsync(InsertCauHoiCodeDTO dto);
+
     }
 }

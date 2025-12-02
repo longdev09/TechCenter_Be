@@ -32,6 +32,9 @@ public partial class Cauhoi
     [Column("CAUHOI")]
     public string? Cauhoi1 { get; set; }
 
+    [InverseProperty("IdCauHoiNavigation")]
+    public virtual CauHoiCode? CauHoiCode { get; set; }
+
     [InverseProperty("IdCauhoiNavigation")]
     public virtual ICollection<Dapantracnghiem> Dapantracnghiems { get; set; } = new List<Dapantracnghiem>();
 

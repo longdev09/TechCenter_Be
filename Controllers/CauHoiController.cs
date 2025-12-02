@@ -46,7 +46,7 @@ namespace TechCenter.Controllers
         {
             var result = await cauHoiService.InsertCauHoiAsync(dto);
             return Ok(BaseResponse<object>.SuccessCreated(result));
-        } 
+        }
 
         [HttpPut("UpdateCauHoi")]
         public async Task<IActionResult> UpdateCauHoi([FromBody] UpdateCauHoiDTO dto)
@@ -65,6 +65,13 @@ namespace TechCenter.Controllers
 
 
             var result = await cauHoiService.InsertDapAnAsync(dtos);
+            return Ok(BaseResponse<object>.SuccessCreated(result));
+        }
+
+        [HttpPost("InsertCauHoiCode")]
+        public async Task<IActionResult> InsertCauHoiCode([FromBody] InsertCauHoiCodeDTO dto)
+        {
+            var result = await cauHoiService.InsertCauHoiCodeAsync(dto);
             return Ok(BaseResponse<object>.SuccessCreated(result));
         }
     }

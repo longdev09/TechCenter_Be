@@ -29,8 +29,8 @@ public partial class Ctuudai
     [Column("SOLUOTTOIDA")]
     public int Soluottoida { get; set; }
 
-    [Column("SOLUOTTHIENTAI")]
-    public int Soluotthientai { get; set; }
+    [Column("SOLUOTHIENTAI")]
+    public int Soluothientai { get; set; }
 
     [Column("TRANGTHAI_UD")]
     [StringLength(20)]
