@@ -36,9 +36,6 @@ public partial class Giaovien
     [InverseProperty("Giaovien")]
     public virtual Taikhoan IdTaikhoanNavigation { get; set; } = null!;
 
-    [InverseProperty("IdGvChinhNavigation")]
-    public virtual ICollection<Lophoc> Lophocs { get; set; } = new List<Lophoc>();
-
     [InverseProperty("IdGiaovienNavigation")]
     public virtual ICollection<Nhanxettiendo> Nhanxettiendos { get; set; } = new List<Nhanxettiendo>();
 

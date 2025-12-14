@@ -31,9 +31,6 @@ public partial class Lophoc
     [Column("NGAYKETTHUC")]
     public DateOnly Ngayketthuc { get; set; }
 
-    [Column("ID_GV_CHINH")]
-    public int? IdGvChinh { get; set; }
-
     [InverseProperty("IdLopNavigation")]
     public virtual ICollection<Baithi> Baithis { get; set; } = new List<Baithi>();
 
@@ -42,10 +39,6 @@ public partial class Lophoc
 
     [InverseProperty("IdLophocNavigation")]
     public virtual ICollection<Hoadon> Hoadons { get; set; } = new List<Hoadon>();
-
-    [ForeignKey("IdGvChinh")]
-    [InverseProperty("Lophocs")]
-    public virtual Giaovien? IdGvChinhNavigation { get; set; }
 
     [ForeignKey("IdKhoahoc")]
     [InverseProperty("Lophocs")]

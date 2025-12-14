@@ -9,5 +9,7 @@ namespace TechCenter.Services.Interface
         Task<List<BaithiWithKhoaDTO>> GetBaithiByLopIdAsync(int idLop);
 
         Task<int> InsertBaiThiAsync(InsertBaiThiDTO dto);
+
+        Task<object> GetBaithiByGiaoVienAsync(int idGiaoVien);
     }
 }

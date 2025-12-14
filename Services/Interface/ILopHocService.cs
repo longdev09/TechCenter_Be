@@ -1,4 +1,5 @@
-﻿using TechCenter.DTO.LichHoc;
+﻿using TechCenter.DTO.HocVien;
+using TechCenter.DTO.LichHoc;
 using TechCenter.DTO.LopHoc;
 
 namespace TechCenter.Services.Interface
@@ -7,5 +8,8 @@ namespace TechCenter.Services.Interface
     {
         Task<List<LopHocByKhoaHocDTO>> GetLopHocByIdKhoaHoc(int idKhoaHoc);
         Task<List<LopHocForGiaoVienDTO>> GetLopHocByGiaoVienAsync(int idGiaoVien);
+        Task<List<HocVienDTO>> GetHocVienByLopAsync(int idLophoc);
+
+        Task<List<LopHocByHocVienDTO>> GetLopHocByHocVienAsync(int idHocVien);
     }
 }

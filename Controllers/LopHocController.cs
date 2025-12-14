@@ -34,5 +34,19 @@ namespace TechCenter.Controllers
             var classes = await _lopHocService.GetLopHocByGiaoVienAsync(idGiaoVien);
             return Ok(BaseResponse<object>.SuccessFetched(classes));
         }
+
+        [HttpGet("GetHocVienByLop")]
+        public async Task<IActionResult> GetHocVienByLop(int idLophoc)
+        {
+            var hocViens = await _lopHocService.GetHocVienByLopAsync(idLophoc);
+            return Ok(BaseResponse<object>.SuccessFetched(hocViens));
+        }
+
+        [HttpGet("GetLopHocByHocVien")]
+        public async Task<IActionResult> GetLopHocByHocVien(int idHocVien)
+        {
+            var lopHocs = await _lopHocService.GetLopHocByHocVienAsync(idHocVien);
+            return Ok(BaseResponse<object>.SuccessFetched(lopHocs));
+        }
     }
 }

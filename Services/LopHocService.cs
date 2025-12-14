@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TechCenter.DTO.LopHoc;
 using TechCenter.DTO.LichHoc;
+using TechCenter.DTO.HocVien;
 using TechCenter.Models;
 using TechCenter.Services.Interface;
 
@@ -91,25 +92,167 @@ namespace TechCenter.Services
 
         public async Task<List<LopHocForGiaoVienDTO>> GetLopHocByGiaoVienAsync(int idGiaoVien)
         {
-            var query = from l in _context.Lophocs.AsNoTracking()
-                        join pc in _context.Phancongs.AsNoTracking() on l.IdLophoc equals pc.IdLophoc into pcj
-                        from pc in pcj.DefaultIfEmpty()
-                        join kh in _context.Khoahocs.AsNoTracking() on l.IdKhoahoc equals kh.IdKhoahoc into khj
-                        from kh in khj.DefaultIfEmpty()
-                        where pc != null && pc.IdGiaovien == idGiaoVien
-                        select new LopHocForGiaoVienDTO
+            // Get classes assigned to teacher
+            var classes = await (from l in _context.Lophocs.AsNoTracking()
+                                 join pc in _context.Phancongs.AsNoTracking() on l.IdLophoc equals pc.IdLophoc
+                                 join kh in _context.Khoahocs.AsNoTracking() on l.IdKhoahoc equals kh.IdKhoahoc into khj
+                                 from kh in khj.DefaultIfEmpty()
+                                 where pc.IdGiaovien == idGiaoVien
+                                 select new
+                                 {
+                                     L = l,
+                                     Pc = pc,
+                                     TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null
+                                 })
+                                 .ToListAsync();
+
+            var lophocIds = classes.Select(c => c.L.IdLophoc).ToList();
+
+            // load schedules for these classes
+            var lichhocs = await _context.Lichhocs
+                .AsNoTracking()
+                .Where(x => lophocIds.Contains(x.IdLophoc))
+                .Select(x => new LichHocDTO
+                {
+                    IdLichhoc = x.IdLichhoc,
+                    IdLophoc = x.IdLophoc,
+                    Thu = x.Thu,
+                    Giobatdau = x.Giobatdau,
+                    Gioketthuc = x.Gioketthuc
+                })
+                .ToListAsync();
+
+            var lichTheoLop = lichhocs.GroupBy(x => x.IdLophoc)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            // map to DTO and attach schedules
+            var result = classes.Select(c => new LopHocForGiaoVienDTO
+            {
+                IdLophoc = c.L.IdLophoc,
+                IdKhoahoc = c.L.IdKhoahoc,
+                TenKhoaHoc = c.TenKhoaHoc,
+                IdGiaoVienPhanCong = c.Pc != null ? (int?)c.Pc.IdGiaovien : null,
+                NgayKhaiGiang = c.L.Ngaykhaigiang != default ? c.L.Ngaykhaigiang.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null,
+                SiSoHienTai = c.L.Sisohientai,
+                SiSoToiDa = c.L.Sisotoida,
+                LichHocs = lichTheoLop.ContainsKey(c.L.IdLophoc) ? lichTheoLop[c.L.IdLophoc] : new List<LichHocDTO>()
+            }).ToList();
+
+            // set ThuName for each schedule item
+            foreach (var item in result)
+            {
+                if (item.LichHocs != null)
+                {
+                    foreach (var lh in item.LichHocs)
+                    {
+                        lh.ThuName = lh.Thu switch
                         {
-                            IdLophoc = l.IdLophoc,
-                            IdKhoahoc = l.IdKhoahoc,
-                            TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null,
-                            IdGvChinh = l.IdGvChinh,
-                            IdGiaoVienPhanCong = pc != null ? (int?)pc.IdGiaovien : null,
-                            NgayKhaiGiang = l.Ngaykhaigiang != default ? l.Ngaykhaigiang.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null,
-                            SiSoHienTai = l.Sisohientai,
-                            SiSoToiDa = l.Sisotoida
+                            2 => "Thứ 2",
+                            3 => "Thứ 3",
+                            4 => "Thứ 4",
+                            5 => "Thứ 5",
+                            6 => "Thứ 6",
+                            7 => "Thứ 7",
+                            8 => "Chủ nhật",
+                            _ => lh.Thu?.ToString() ?? string.Empty
+                        };
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<List<HocVienDTO>> GetHocVienByLopAsync(int idLophoc)
+        {
+            var query = from dk in _context.Dangkylops.AsNoTracking()
+                        join hv in _context.Hocviens.AsNoTracking() on dk.IdHv equals hv.IdHocvien
+                        join tk in _context.Taikhoans.AsNoTracking() on hv.IdTaikhoan equals tk.IdTaikhoan into tkj
+                        from tk in tkj.DefaultIfEmpty()
+                        where dk.IdLophoc == idLophoc
+                        select new HocVienDTO
+                        {
+                            idHocVien = hv.IdHocvien,
+                            idTaiKhoan = hv.IdTaikhoan,
+                            hoTenHv = hv.Hotenhv,
+                            gioiTinhHv = hv.Gioitinhhv,
+                            ngaySinhHv = hv.Ngaysinhhv,
+                            diaChiHv = hv.Diachihv
                         };
 
-            return await query.ToListAsync();
+            var result = await query.Distinct().ToListAsync();
+            return result;
+        }
+
+        public async Task<List<LopHocByHocVienDTO>> GetLopHocByHocVienAsync(int idHocVien)
+        {
+            var classes = await (from dk in _context.Dangkylops.AsNoTracking()
+                                 join l in _context.Lophocs.AsNoTracking() on dk.IdLophoc equals l.IdLophoc
+                                 join kh in _context.Khoahocs.AsNoTracking() on l.IdKhoahoc equals kh.IdKhoahoc into khj
+                                 from kh in khj.DefaultIfEmpty()
+                                 where dk.IdHv == idHocVien
+                                 select new
+                                 {
+                                     Dk = dk,
+                                     L = l,
+                                     TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null
+                                 })
+                                 .ToListAsync();
+
+            var lophocIds = classes.Select(c => c.L.IdLophoc).ToList();
+
+            var lichhocs = await _context.Lichhocs
+                .AsNoTracking()
+                .Where(x => lophocIds.Contains(x.IdLophoc))
+                .Select(x => new LichHocDTO
+                {
+                    IdLichhoc = x.IdLichhoc,
+                    IdLophoc = x.IdLophoc,
+                    Thu = x.Thu,
+                    Giobatdau = x.Giobatdau,
+                    Gioketthuc = x.Gioketthuc
+                })
+                .ToListAsync();
+
+            var lichTheoLop = lichhocs.GroupBy(x => x.IdLophoc)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            var result = classes.Select(c => new LopHocByHocVienDTO
+            {
+                IdLophoc = c.L.IdLophoc,
+                IdKhoahoc = c.L.IdKhoahoc,
+                TenKhoaHoc = c.TenKhoaHoc,
+                NgayKhaiGiang = c.L.Ngaykhaigiang != default ? c.L.Ngaykhaigiang.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null,
+                SiSoHienTai = c.L.Sisohientai,
+                SiSoToiDa = c.L.Sisotoida,
+                IdDangKy = c.Dk.IdDangky,
+                NgayDangKy = c.Dk.Ngaydangky,
+                LichHocs = lichTheoLop.ContainsKey(c.L.IdLophoc) ? lichTheoLop[c.L.IdLophoc] : new List<LichHocDTO>()
+            }).ToList();
+
+            // set ThuName for schedule items
+            foreach (var item in result)
+            {
+                if (item.LichHocs != null)
+                {
+                    foreach (var lh in item.LichHocs)
+                    {
+                        lh.ThuName = lh.Thu switch
+                        {
+                            2 => "Thứ 2",
+                            3 => "Thứ 3",
+                            4 => "Thứ 4",
+                            5 => "Thứ 5",
+                            6 => "Thứ 6",
+                            7 => "Thứ 7",
+                            8 => "Chủ nhật",
+                            _ => lh.Thu?.ToString() ?? string.Empty
+                        };
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

@@ -29,5 +29,12 @@ namespace TechCenter.Controllers
             var newBaiThiId = await baiThiService.InsertBaiThiAsync(dto);
             return Ok(BaseResponse<object>.SuccessCreated(newBaiThiId));
         }
+
+        [HttpGet("GetBaithiByGiaoVien")]
+        public async Task<IActionResult> GetBaithiByGiaoVien(int idGiaoVien)
+        {
+            var result = await baiThiService.GetBaithiByGiaoVienAsync(idGiaoVien);
+            return Ok(BaseResponse<object>.SuccessFetched(result));
+        }
     }
 }

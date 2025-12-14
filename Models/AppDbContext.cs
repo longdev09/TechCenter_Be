@@ -334,8 +334,6 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.IdLophoc).HasName("PK__LOPHOC__06CC5F7E2B71FA9D");
 
-            entity.HasOne(d => d.IdGvChinhNavigation).WithMany(p => p.Lophocs).HasConstraintName("FK_LH_GV");
-
             entity.HasOne(d => d.IdKhoahocNavigation).WithMany(p => p.Lophocs)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_LOPHOC_KHOAHOC");

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TechCenter.DTO.LichHoc;
 
 namespace TechCenter.DTO.LopHoc
 {
@@ -13,5 +14,6 @@ namespace TechCenter.DTO.LopHoc
          public DateTime? NgayKhaiGiang { get; set; }
          public int SiSoHienTai { get; set; }
          public int SiSoToiDa { get; set; }
- }
+         public List<LichHocDTO>? LichHocs { get; set; }
+    }
 }
