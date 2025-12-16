@@ -8,17 +8,40 @@ namespace TechCenter.Services
     public class TaiLieuService : ITaiLieuService
     {
         private readonly AppDbContext _context;
-        public TaiLieuService(AppDbContext context)
+        private readonly IUploadAnhService _uploadService;
+        public TaiLieuService(AppDbContext context, IUploadAnhService uploadService)
         {
             _context = context;
+            _uploadService = uploadService;
         }
 
 
-        public async Task ThemTaiLieu (Tailieu tailieu)
+        public async Task ThemTaiLieuAsync(Tailieu tailieu, IFormFile? file, string folder = "tailieu")
         {
+            if (tailieu == null)
+                throw new ArgumentNullException(nameof(tailieu));
+
+            tailieu.Tieudetl = (tailieu.Tieudetl ?? string.Empty).Trim();
+            tailieu.Motatl = (tailieu.Motatl ?? string.Empty).Trim();
+            tailieu.Ngaydangtl = DateTime.Now;
+
+            if (file != null && file.Length > 0)
+            {
+                var baseName = string.IsNullOrWhiteSpace(tailieu.Tieudetl)
+                    ? "tailieu"
+                    : Path.GetFileNameWithoutExtension(tailieu.Tieudetl)
+                          .Replace(" ", "_");
+
+                var (url, publicId) = await _uploadService
+                    .UploadFileAsync(file, folder, baseName);
+
+                tailieu.Urltailieu = url;
+            }
+
             _context.Tailieus.Add(tailieu);
             await _context.SaveChangesAsync();
         }
+
 
 
         public async Task<object> GetTaiLieuChoHocVienAsync(int idHocVien)

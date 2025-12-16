@@ -31,6 +31,10 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Chatsession> Chatsessions { get; set; }
 
+    public virtual DbSet<ChitietbailamTuluan> ChitietbailamTuluans { get; set; }
+
+    public virtual DbSet<Chitietbailamtracnghiem> Chitietbailamtracnghiems { get; set; }
+
     public virtual DbSet<Chungchi> Chungchis { get; set; }
 
     public virtual DbSet<Ctuudai> Ctuudais { get; set; }
@@ -50,6 +54,8 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<Hoadon> Hoadons { get; set; }
 
     public virtual DbSet<Hocvien> Hocviens { get; set; }
+
+    public virtual DbSet<Ketquathi> Ketquathis { get; set; }
 
     public virtual DbSet<Khoahoc> Khoahocs { get; set; }
 
@@ -172,6 +178,28 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.IdTaikhoanNavigation).WithMany(p => p.Chatsessions).HasConstraintName("FK_CHATSESSION_TAIKHOAN");
         });
 
+        modelBuilder.Entity<ChitietbailamTuluan>(entity =>
+        {
+            entity.HasKey(e => e.IdBailam).HasName("PK__CHITIETB__90BEDB607DA60768");
+
+            entity.HasOne(d => d.IdCauhoiNavigation).WithMany(p => p.ChitietbailamTuluans)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_BLT_CAUHOI");
+
+            entity.HasOne(d => d.IdKetquaNavigation).WithMany(p => p.ChitietbailamTuluans).HasConstraintName("FK_BLT_KETQUA");
+        });
+
+        modelBuilder.Entity<Chitietbailamtracnghiem>(entity =>
+        {
+            entity.HasKey(e => e.IdChitiet).HasName("PK__CHITIETB__727EE308823CD9CB");
+
+            entity.HasOne(d => d.IdCauhoiNavigation).WithMany(p => p.Chitietbailamtracnghiems)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CTBL_CAUHOI");
+
+            entity.HasOne(d => d.IdKetquaNavigation).WithMany(p => p.Chitietbailamtracnghiems).HasConstraintName("FK_CTBL_KETQUA");
+        });
+
         modelBuilder.Entity<Chungchi>(entity =>
         {
             entity.HasKey(e => e.IdChungchi).HasName("PK__CHUNGCHI__92727E22041577B0");
@@ -285,6 +313,24 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("FK_HOCVIEN_TAIKHOAN");
         });
 
+        modelBuilder.Entity<Ketquathi>(entity =>
+        {
+            entity.HasKey(e => e.IdKetqua).HasName("PK__KETQUATH__EB9950D9A6EB1A96");
+
+            entity.Property(e => e.LanThi).HasDefaultValue(1);
+            entity.Property(e => e.Ngaythi).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Trangthai).HasDefaultValue("DANG_LAM");
+            entity.Property(e => e.TrangthaiCham).HasDefaultValue("CHO_CHAM");
+
+            entity.HasOne(d => d.IdBaithiNavigation).WithMany(p => p.Ketquathis)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_KQ_BAITHI");
+
+            entity.HasOne(d => d.IdHocvienNavigation).WithMany(p => p.Ketquathis)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_KQ_HOCVIEN");
+        });
+
         modelBuilder.Entity<Khoahoc>(entity =>
         {
             entity.HasKey(e => e.IdKhoahoc).HasName("PK__KHOAHOC__2D63BD9E4A8DBE41");
@@ -309,6 +355,8 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<LichhocChitiet>(entity =>
         {
             entity.HasKey(e => e.IdLhct).HasName("PK__LICHHOC___9B10EE78F4448DDB");
+
+            entity.HasOne(d => d.IdGiaovienDaythayNavigation).WithMany(p => p.LichhocChitiets).HasConstraintName("FK_LHCT_GV");
 
             entity.HasOne(d => d.IdLichhocNavigation).WithMany(p => p.LichhocChitiets)
                 .OnDelete(DeleteBehavior.ClientSetNull)

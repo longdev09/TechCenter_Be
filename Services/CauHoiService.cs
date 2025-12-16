@@ -134,7 +134,9 @@ namespace TechCenter.Services
                 {
                     IdCauhoi = dto.IdCauHoi,
                     Ma = dto.Ma ?? string.Empty,
-                    Isdung = dto.IsDung
+                    Isdung = dto.IsDung,
+                    Cauhoidapan = dto.CauHoiDapAn
+
                 };
 
                 entities.Add(entity);

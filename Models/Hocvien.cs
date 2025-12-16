@@ -58,5 +58,8 @@ public partial class Hocvien
     public virtual Taikhoan IdTaikhoanNavigation { get; set; } = null!;
 
     [InverseProperty("IdHocvienNavigation")]
+    public virtual ICollection<Ketquathi> Ketquathis { get; set; } = new List<Ketquathi>();
+
+    [InverseProperty("IdHocvienNavigation")]
     public virtual ICollection<Nhanxettiendo> Nhanxettiendos { get; set; } = new List<Nhanxettiendo>();
 }

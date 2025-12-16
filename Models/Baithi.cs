@@ -52,4 +52,7 @@ public partial class Baithi
     [ForeignKey("IdLop")]
     [InverseProperty("Baithis")]
     public virtual Lophoc? IdLopNavigation { get; set; }
+
+    [InverseProperty("IdBaithiNavigation")]
+    public virtual ICollection<Ketquathi> Ketquathis { get; set; } = new List<Ketquathi>();
 }

@@ -6,5 +6,6 @@
         public int IdCauHoi { get; set; }
         public string Ma { get; set; }
         public bool? IsDung { get; set; }
+        public string CauHoiDapAn { get; set; }
     }
 }

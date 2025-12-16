@@ -36,6 +36,12 @@ public partial class Cauhoi
     public virtual CauHoiCode? CauHoiCode { get; set; }
 
     [InverseProperty("IdCauhoiNavigation")]
+    public virtual ICollection<ChitietbailamTuluan> ChitietbailamTuluans { get; set; } = new List<ChitietbailamTuluan>();
+
+    [InverseProperty("IdCauhoiNavigation")]
+    public virtual ICollection<Chitietbailamtracnghiem> Chitietbailamtracnghiems { get; set; } = new List<Chitietbailamtracnghiem>();
+
+    [InverseProperty("IdCauhoiNavigation")]
     public virtual ICollection<Dapantracnghiem> Dapantracnghiems { get; set; } = new List<Dapantracnghiem>();
 
     [ForeignKey("IdBaithi")]

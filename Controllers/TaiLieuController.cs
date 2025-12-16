@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TechCenter.Middleware;
+using TechCenter.Models;
 using TechCenter.Services.Interface;
 
 namespace TechCenter.Controllers
@@ -21,6 +22,18 @@ namespace TechCenter.Controllers
         {
             var list = await _taiLieuService.GetTaiLieuChoHocVienAsync(idHocVien);
             return Ok(BaseResponse<object>.SuccessFetched(list));
+        }
+
+        [HttpPost("InsertTaiLieu")]
+        public async Task<IActionResult> InsertTaiLieu(
+           [FromForm] Tailieu tailieu,
+           IFormFile? file)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _taiLieuService.ThemTaiLieuAsync(tailieu, file);
+            return Ok(BaseResponse<object>.SuccessCreated(null));
         }
     }
 }

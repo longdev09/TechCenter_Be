@@ -9,5 +9,6 @@ namespace TechCenter.DTO.CauHoi
         public int IdCauHoi { get; set; }
         public string Ma { get; set; } = string.Empty;
         public bool IsDung { get; set; }
+        public string CauHoiDapAn { get; set; }
     }
 }

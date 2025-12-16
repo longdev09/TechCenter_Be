@@ -22,6 +22,10 @@ public partial class Dapantracnghiem
     [Column("ISDUNG")]
     public bool? Isdung { get; set; }
 
+    [Column("CAUHOIDAPAN")]
+    [StringLength(500)]
+    public string? Cauhoidapan { get; set; }
+
     [ForeignKey("IdCauhoi")]
     [InverseProperty("Dapantracnghiems")]
     public virtual Cauhoi IdCauhoiNavigation { get; set; } = null!;

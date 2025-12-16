@@ -37,7 +37,7 @@ builder.Services.AddScoped<IBaiThiService, BaiThiService>();
 builder.Services.AddScoped<IGiaoVienService, GiaoVienService>();
 builder .Services.AddScoped<ILoaiBaiThiService, LoaiBaiThiService>();
 builder.Services.AddScoped<ICauHoiService, CauHoiService>();
-
+builder.Services.AddScoped<IKetQuaThiService, KetQuaThiService>();
 
 
 // Cho phép CORS
@@ -46,7 +46,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5174") // FE Vite
+            policy.WithOrigins("http://localhost:5173") // FE Vite
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();

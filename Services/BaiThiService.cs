@@ -111,28 +111,57 @@ namespace TechCenter.Services
 
 
 
-        public async Task<List<BaiThiLopHocDTo>> GetLoaiBaiThiByLopIdAsync(int idLop)
+        public async Task<List<BaiThiLopHocDTO>> GetLoaiBaiThiByLopIdAsync(int idLop, int idHocVien)
         {
+            // load baithis for the class
             var query = from bt in _context.Baithis.AsNoTracking()
                         join lh in _context.Lophocs.AsNoTracking() on bt.IdLop equals lh.IdLophoc into lhj
                         from lh in lhj.DefaultIfEmpty()
                         join kh in _context.Khoahocs.AsNoTracking() on lh.IdKhoahoc equals kh.IdKhoahoc into khj
                         from kh in khj.DefaultIfEmpty()
                         where lh != null && lh.IdLophoc == idLop && bt.IdLoaibaithi == 2
-                        select new BaiThiLopHocDTo
-                        {
-                            IdBaithi = bt.IdBaithi,
-                            IdLop = lh != null ? (int?)lh.IdLophoc : null,
-                            IdKhoahoc = kh != null ? (int?)kh.IdKhoahoc : null,
-                            TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null,
-                            Tieude = bt.Tieude,
-                            Thoiluong = bt.Thoiluong,
-                            Ngaytao = bt.Ngaytao,
-                            NgayBatDau = bt.Ngaybatdau,
-                            NgayKetThuc = bt.Ngayketthuc
-                        };
+                        select new { Bt = bt, Lh = lh, Kh = kh };
 
-            return await query.ToListAsync();
+            var items = await query.ToListAsync();
+            if (items.Count == 0) return new List<BaiThiLopHocDTO>();
+
+            // load any ketqua records for this student and these baithis
+            var baithiIds = items.Select(x => x.Bt.IdBaithi).Distinct().ToList();
+            var ketquas = await _context.Ketquathis
+                .AsNoTracking()
+                .Where(k => baithiIds.Contains(k.IdBaithi) && k.IdHocvien == idHocVien)
+                .ToListAsync();
+
+            // pick latest ketqua per baithi (if multiple) to determine status
+            var ketquaByBaithi = ketquas
+                .GroupBy(k => k.IdBaithi)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(k => k.Ngaythi).First());
+
+            // Map to DTO and include status info:
+            // - TrangThaiKetQua: actual status string from Ketquathi (if exists)
+            // - DaThi: whether student has any ketqua for this baithi
+            // - ChoPhepThi: allowed to take (true when no ketqua exists) — adjust rule if you allow retake
+            var result = items.Select(x =>
+            {
+                ketquaByBaithi.TryGetValue(x.Bt.IdBaithi, out var kq);
+                return new BaiThiLopHocDTO
+                {
+                    IdBaithi = x.Bt.IdBaithi,
+                    IdLop = x.Lh != null ? (int?)x.Lh.IdLophoc : null,
+                    IdKhoahoc = x.Kh != null ? (int?)x.Kh.IdKhoahoc : null,
+                    TenKhoaHoc = x.Kh != null ? x.Kh.Tenkhoahoc : null,
+                    Tieude = x.Bt.Tieude,
+                    Thoiluong = x.Bt.Thoiluong,
+                    Ngaytao = x.Bt.Ngaytao,
+                    NgayBatDau = x.Bt.Ngaybatdau,
+                    NgayKetThuc = x.Bt.Ngayketthuc,
+                    TrangThaiKetQua = kq != null ? kq.Trangthai : null,
+                    DaThi = kq != null,
+                    ChoPhepThi = kq == null
+                };
+            }).ToList();
+
+            return result;
         }
 
 
@@ -170,7 +199,8 @@ namespace TechCenter.Services
                     IdDapAn = d.IdDapan,
                     IdCauHoi = d.IdCauhoi,
                     Ma = d.Ma,
-                    IsDung = d.Isdung ?? false
+                    //IsDung = d.Isdung ?? false,
+                    CauHoiDapAn = d.Cauhoidapan
                 })
                 .ToListAsync();
 

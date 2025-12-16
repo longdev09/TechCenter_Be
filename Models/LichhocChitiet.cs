@@ -27,8 +27,15 @@ public partial class LichhocChitiet
     [StringLength(255)]
     public string? Urlbuoihoc { get; set; }
 
+    [Column("ID_GIAOVIEN_DAYTHAY")]
+    public int? IdGiaovienDaythay { get; set; }
+
     [InverseProperty("IdLhctNavigation")]
     public virtual ICollection<Diemdanh> Diemdanhs { get; set; } = new List<Diemdanh>();
+
+    [ForeignKey("IdGiaovienDaythay")]
+    [InverseProperty("LichhocChitiets")]
+    public virtual Giaovien? IdGiaovienDaythayNavigation { get; set; }
 
     [ForeignKey("IdLichhoc")]
     [InverseProperty("LichhocChitiets")]

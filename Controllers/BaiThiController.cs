@@ -38,10 +38,10 @@ namespace TechCenter.Controllers
         }
 
 
-        [HttpGet("GetLoaiBaiThiByLopId")]
-        public async Task<IActionResult> GetLoaiBaiThiByLopId(int idLop)
+        [HttpGet("GetLoaiBaiThiByLopIdIDHocVien")]
+        public async Task<IActionResult> GetLoaiBaiThiByLopId(int idLop, int hocVien)
         {
-            var result = await baiThiService.GetLoaiBaiThiByLopIdAsync(idLop);
+            var result = await baiThiService.GetLoaiBaiThiByLopIdAsync(idLop, hocVien);
             return Ok(BaseResponse<object>.SuccessFetched(result));
         }
         [HttpGet("GetCauHoiFullByBaiThi")]
