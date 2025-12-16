@@ -16,6 +16,8 @@ namespace TechCenter.DTO.LopHoc
             public int IdDangKy { get; set; }
             public DateTime NgayDangKy { get; set; }
             public List<TechCenter.DTO.LichHoc.LichHocDTO>? LichHocs { get; set; }
-        
+            public string? TenGiaoVien { get; set; }
+            public string? AnhGiaoVien { get; set; }
+
     }
 }

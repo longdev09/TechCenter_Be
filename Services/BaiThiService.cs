@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using TechCenter.DTO.BaiThi;
+using TechCenter.DTO.CauHoi;
 using TechCenter.Models;
 using TechCenter.Services.Interface;
 
@@ -36,7 +38,8 @@ namespace TechCenter.Services
             return await query.ToListAsync();
         }
 
-            public async Task<int> InsertBaiThiAsync(InsertBaiThiDTO dto)
+
+        public async Task<int> InsertBaiThiAsync(InsertBaiThiDTO dto)
             {
                 // map DTO to entity
                 var entity = new Baithi
@@ -47,8 +50,8 @@ namespace TechCenter.Services
                     Nguoitao = dto.NguoiTao,
                     IdLop = dto.Id_Lop,
                     IdLoaibaithi = dto.Id_LoaiBaiThi,
-                    Ngaybatdau = dto.NgayBatDau.HasValue ? DateOnly.FromDateTime(dto.NgayBatDau.Value) : null,
-                    Ngayketthuc = dto.NgayKetThuc.HasValue ? DateOnly.FromDateTime(dto.NgayKetThuc.Value) : null,
+                    Ngaybatdau = dto.NgayBatDau,
+                    Ngayketthuc = dto.NgayKetThuc,
                     Ngaytao = DateTime.UtcNow
                 };
 
@@ -105,6 +108,106 @@ namespace TechCenter.Services
             return result;
 
         }
+
+
+
+        public async Task<List<BaiThiLopHocDTo>> GetLoaiBaiThiByLopIdAsync(int idLop)
+        {
+            var query = from bt in _context.Baithis.AsNoTracking()
+                        join lh in _context.Lophocs.AsNoTracking() on bt.IdLop equals lh.IdLophoc into lhj
+                        from lh in lhj.DefaultIfEmpty()
+                        join kh in _context.Khoahocs.AsNoTracking() on lh.IdKhoahoc equals kh.IdKhoahoc into khj
+                        from kh in khj.DefaultIfEmpty()
+                        where lh != null && lh.IdLophoc == idLop && bt.IdLoaibaithi == 2
+                        select new BaiThiLopHocDTo
+                        {
+                            IdBaithi = bt.IdBaithi,
+                            IdLop = lh != null ? (int?)lh.IdLophoc : null,
+                            IdKhoahoc = kh != null ? (int?)kh.IdKhoahoc : null,
+                            TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null,
+                            Tieude = bt.Tieude,
+                            Thoiluong = bt.Thoiluong,
+                            Ngaytao = bt.Ngaytao,
+                            NgayBatDau = bt.Ngaybatdau,
+                            NgayKetThuc = bt.Ngayketthuc
+                        };
+
+            return await query.ToListAsync();
+        }
+
+
+        public async Task<List<CauHoiWithDapAnDTO>> GetCauHoiFullByBaiThiAsync(int idBaiThi)
+        {
+            // load questions (with type name)
+            var questions = await (from ch in _context.Cauhois.AsNoTracking()
+                                   join lb in _context.Loaicauhois.AsNoTracking() on ch.IdLoaicauhoi equals lb.IdLoaicauhoi into lbj
+                                   from lb in lbj.DefaultIfEmpty()
+                                   where ch.IdBaithi == idBaiThi
+                                   orderby ch.Stt
+                                   select new
+                                   {
+                                       ch.IdCauhoi,
+                                       ch.IdBaithi,
+                                       ch.IdLoaicauhoi,
+                                       LoaiCauHoi = lb != null ? lb.TenLoai : null,
+                                       ch.Stt,
+                                       ch.Diem,
+                                       ch.Mucdo,
+                                       Cauhoi = ch.Cauhoi1
+                                   }).ToListAsync();
+
+            if (questions == null || questions.Count == 0)
+                return new List<CauHoiWithDapAnDTO>();
+
+            var cauHoiIds = questions.Select(q => q.IdCauhoi).ToList();
+
+            // load multiple-choice answers
+            var dapans = await _context.Dapantracnghiems
+                .AsNoTracking()
+                .Where(d => cauHoiIds.Contains(d.IdCauhoi))
+                .Select(d => new DapAnDTO
+                {
+                    IdDapAn = d.IdDapan,
+                    IdCauHoi = d.IdCauhoi,
+                    Ma = d.Ma,
+                    IsDung = d.Isdung ?? false
+                })
+                .ToListAsync();
+
+            // load code answers (if any)
+            var codes = await _context.CauHoiCodes
+                .AsNoTracking()
+                .Where(c => cauHoiIds.Contains(c.IdCauHoi))
+                .Select(c => new CauHoiCodeDTO
+                {
+                    IdCauHoi = c.IdCauHoi,
+                    CodeMau = c.CodeMau,
+                    NgonNgu = c.NgonNgu
+                })
+                .ToListAsync();
+
+            var dapansBy = dapans.GroupBy(d => d.IdCauHoi).ToDictionary(g => g.Key, g => g.ToList());
+            var codesBy = codes.ToDictionary(c => c.IdCauHoi, c => c);
+
+            // map to DTO and attach answers
+            var result = questions.Select(q => new CauHoiWithDapAnDTO
+            {
+                IdCauHoi = q.IdCauhoi,
+                IdBaiThi = q.IdBaithi,
+                IdLoaiCauHoi = q.IdLoaicauhoi,
+                LoaiCauHoi = q.LoaiCauHoi,
+                Stt = q.Stt,
+                Diem = q.Diem,
+                MucDo = q.Mucdo,
+                Cauhoi = q.Cauhoi,
+                DapAns = dapansBy.ContainsKey(q.IdCauhoi) ? dapansBy[q.IdCauhoi] : new List<DapAnDTO>(),
+                CauHoiCode = codesBy.ContainsKey(q.IdCauhoi) ? codesBy[q.IdCauhoi] : null
+            }).ToList();
+
+            return result;
+        }
+
+
 
     }
 }

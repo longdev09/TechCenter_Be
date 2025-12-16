@@ -33,11 +33,11 @@ public partial class Baithi
     [StringLength(255)]
     public string? Mota { get; set; }
 
-    [Column("NGAYBATDAU")]
-    public DateOnly? Ngaybatdau { get; set; }
+    [Column("NGAYBATDAU", TypeName = "datetime")]
+    public DateTime? Ngaybatdau { get; set; }
 
-    [Column("NGAYKETTHUC")]
-    public DateOnly? Ngayketthuc { get; set; }
+    [Column("NGAYKETTHUC", TypeName = "datetime")]
+    public DateTime? Ngayketthuc { get; set; }
 
     [Column("ID_LOAIBAITHI")]
     public int? IdLoaibaithi { get; set; }

@@ -186,18 +186,31 @@ namespace TechCenter.Services
 
         public async Task<List<LopHocByHocVienDTO>> GetLopHocByHocVienAsync(int idHocVien)
         {
-            var classes = await (from dk in _context.Dangkylops.AsNoTracking()
-                                 join l in _context.Lophocs.AsNoTracking() on dk.IdLophoc equals l.IdLophoc
-                                 join kh in _context.Khoahocs.AsNoTracking() on l.IdKhoahoc equals kh.IdKhoahoc into khj
-                                 from kh in khj.DefaultIfEmpty()
-                                 where dk.IdHv == idHocVien
-                                 select new
-                                 {
-                                     Dk = dk,
-                                     L = l,
-                                     TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null
-                                 })
-                                 .ToListAsync();
+            var classesRaw = await (from dk in _context.Dangkylops.AsNoTracking()
+                                     join l in _context.Lophocs.AsNoTracking() on dk.IdLophoc equals l.IdLophoc
+                                     join kh in _context.Khoahocs.AsNoTracking() on l.IdKhoahoc equals kh.IdKhoahoc into khj
+                                     from kh in khj.DefaultIfEmpty()
+                                     // left join phancong -> giaovien to get teacher info
+                                     join pc in _context.Phancongs.AsNoTracking() on l.IdLophoc equals pc.IdLophoc into pcj
+                                     from pc in pcj.DefaultIfEmpty()
+                                     join g in _context.Giaoviens.AsNoTracking() on pc.IdGiaovien equals g.IdGiaovien into gj
+                                     from g in gj.DefaultIfEmpty()
+                                     where dk.IdHv == idHocVien
+                                     select new
+                                     {
+                                         Dk = dk,
+                                         L = l,
+                                         TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null,
+                                         TenGiaoVien = g != null ? g.Hotengv : null,
+                                         AnhGiaoVien = (string?)null
+                                     })
+                                     .ToListAsync();
+
+            // Deduplicate by IdLophoc (prefer entry that has teacher name if multiple rows exist)
+            var classes = classesRaw
+                .GroupBy(c => c.L.IdLophoc)
+                .Select(g => g.OrderByDescending(x => !string.IsNullOrEmpty(x.TenGiaoVien)).First())
+                .ToList();
 
             var lophocIds = classes.Select(c => c.L.IdLophoc).ToList();
 
@@ -227,7 +240,9 @@ namespace TechCenter.Services
                 SiSoToiDa = c.L.Sisotoida,
                 IdDangKy = c.Dk.IdDangky,
                 NgayDangKy = c.Dk.Ngaydangky,
-                LichHocs = lichTheoLop.ContainsKey(c.L.IdLophoc) ? lichTheoLop[c.L.IdLophoc] : new List<LichHocDTO>()
+                TenGiaoVien = c.TenGiaoVien,
+                AnhGiaoVien = c.AnhGiaoVien,
+                LichHocs = lichTheoLop.ContainsKey(c.L.IdLophoc) ? lichTheoLop[c.L.IdLophoc] : new List<LichHocDTO>(),
             }).ToList();
 
             // set ThuName for schedule items
@@ -256,3 +271,4 @@ namespace TechCenter.Services
         }
     }
 }
+
