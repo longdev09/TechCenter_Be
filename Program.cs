@@ -46,7 +46,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173") // FE Vite
+            policy.WithOrigins("http://localhost:5174") // FE Vite
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();

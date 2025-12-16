@@ -207,7 +207,45 @@ namespace TechCenter.Services
             return result;
         }
 
+        // New: get full bai thi info by id including class and course info
+        public async Task<BaithiDetailDTO?> GetBaithiByIdAsync(int idBaithi)
+        {
+            var query = from bt in _context.Baithis.AsNoTracking()
+                        where bt.IdBaithi == idBaithi
+                        join lh in _context.Lophocs.AsNoTracking() on bt.IdLop equals lh.IdLophoc into lhj
+                        from lh in lhj.DefaultIfEmpty()
+                        join kh in _context.Khoahocs.AsNoTracking() on lh.IdKhoahoc equals kh.IdKhoahoc into khj
+                        from kh in khj.DefaultIfEmpty()
+                        join lbt in _context.LoaiBaithis.AsNoTracking() on bt.IdLoaibaithi equals lbt.IdLoaibaithi into lbtj
+                        from lbt in lbtj.DefaultIfEmpty()
+                        select new BaithiDetailDTO
+                        {
+                            IdBaithi = bt.IdBaithi,
+                            Tieude = bt.Tieude,
+                            ThoiLuong = bt.Thoiluong,
+                            Mota = bt.Mota,
+                            NgayBatDau = bt.Ngaybatdau,
+                            NgayKetThuc = bt.Ngayketthuc,
+                            IdLoaiBaithi = bt.IdLoaibaithi,
+                            TenLoai = lbt != null ? lbt.Tenloai : null,
+                            NguoiTao = bt.Nguoitao,
+                            NgayTao = bt.Ngaytao,
+                            // class info
+                            IdLop = lh != null ? (int?)lh.IdLophoc : null,
+                            IdKhoaHoc = kh != null ? (int?)kh.IdKhoahoc : null,
+                            SiSoHienTai = lh != null ? (int?)lh.Sisohientai : null,
+                            SiSoToiDa = lh != null ? (int?)lh.Sisotoida : null,
+                            NgayKhaiGiang = (lh != null && lh.Ngaykhaigiang != default) ? lh.Ngaykhaigiang.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null,
+                            NgayBatDauLop = (lh != null && lh.Ngaybatdau != default) ? lh.Ngaybatdau.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null,
+                            NgayKetThucLop = (lh != null && lh.Ngayketthuc != default) ? lh.Ngayketthuc.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null,
+                            // course info
+                            TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null,
+                            HocPhi = kh != null ? kh.Hocphi : null,
+                            AnhDaiDien = kh != null ? kh.Anhdaidien : null
+                        };
 
+            return await query.FirstOrDefaultAsync();
+        }
 
     }
 }

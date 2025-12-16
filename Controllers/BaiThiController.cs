@@ -50,5 +50,12 @@ namespace TechCenter.Controllers
             var result = await baiThiService.GetCauHoiFullByBaiThiAsync(idBaiThi);
             return Ok(BaseResponse<object>.SuccessFetched(result));
         }
+
+        [HttpGet("GetInfoLopByIdBaiThi")]
+        public async Task<IActionResult> GetInfoLopByIdBaiThi(int idBaithi)
+        {
+            var result = await baiThiService.GetBaithiByIdAsync(idBaithi);
+            return Ok(BaseResponse<object>.SuccessFetched(result));
+        }
     }
 }
