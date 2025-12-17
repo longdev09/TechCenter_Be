@@ -1,7 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using TechCenter.DTO.TaiLieu;
 using TechCenter.Models;
 using TechCenter.Services.Interface;
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TechCenter.Services
 {
@@ -16,7 +22,11 @@ namespace TechCenter.Services
         }
 
 
-        public async Task ThemTaiLieuAsync(Tailieu tailieu, IFormFile? file, string folder = "tailieu")
+        public async Task ThemTaiLieuAsync(
+            Tailieu tailieu,
+            IFormFile? file,
+            int? idLophoc = null,
+            string folder = "tailieu")
         {
             if (tailieu == null)
                 throw new ArgumentNullException(nameof(tailieu));
@@ -29,18 +39,30 @@ namespace TechCenter.Services
             {
                 var baseName = string.IsNullOrWhiteSpace(tailieu.Tieudetl)
                     ? "tailieu"
-                    : Path.GetFileNameWithoutExtension(tailieu.Tieudetl)
-                          .Replace(" ", "_");
+                    : Path.GetFileNameWithoutExtension(tailieu.Tieudetl).Replace(" ", "_");
 
-                var (url, publicId) = await _uploadService
-                    .UploadFileAsync(file, folder, baseName);
-
+                var (url, _) = await _uploadService.UploadFileAsync(file, folder, baseName);
                 tailieu.Urltailieu = url;
             }
 
             _context.Tailieus.Add(tailieu);
+
+            // Gán 1 lớp học
+            if (idLophoc.HasValue)
+            {
+                var lophoc = await _context.Lophocs
+                    .FirstOrDefaultAsync(x => x.IdLophoc == idLophoc.Value);
+
+                if (lophoc == null)
+                    throw new Exception("Lớp học không tồn tại");
+
+                tailieu.IdLophocs ??= new List<Lophoc>();
+                tailieu.IdLophocs.Add(lophoc);
+            }
+
             await _context.SaveChangesAsync();
         }
+
 
 
 
@@ -120,6 +142,39 @@ namespace TechCenter.Services
             return groupedResult;
         }
 
-       
+
+        public async Task<List<TaiLieuByLopDTO>> GetTaiLieuByLopAsync(int idLophoc)
+        {
+            // latest assigned teacher for the class (optional)
+            var hotenGV = await _context.Phancongs
+                .Where(pc => pc.IdLophoc == idLophoc)
+                .OrderByDescending(pc => pc.Ngayphancong)
+                .Select(pc => pc.IdGiaovienNavigation != null ? pc.IdGiaovienNavigation.Hotengv : null)
+                .FirstOrDefaultAsync();
+
+            var list = await (
+                from tl in _context.Tailieus.AsNoTracking()
+                from lh in tl.IdLophocs
+                where lh.IdLophoc == idLophoc
+                join kh in _context.Khoahocs.AsNoTracking() on lh.IdKhoahoc equals kh.IdKhoahoc into khj
+                from kh in khj.DefaultIfEmpty()
+                select new TaiLieuByLopDTO
+                {
+                    IdTailieu = tl.IdTailieu,
+                    Tieudetl = tl.Tieudetl,
+                    Motatl = tl.Motatl,
+                    Urltailieu = tl.Urltailieu,
+                    Ngaydangtl = tl.Ngaydangtl,
+                    IsPublic = tl.IsPublic,
+                    IdLophoc = lh.IdLophoc,
+                    TenKhoaHoc = kh != null ? kh.Tenkhoahoc : null,
+                    Hotengv = hotenGV
+                }
+            ).ToListAsync();
+
+            return list;
+        }
+
+
     }
 }

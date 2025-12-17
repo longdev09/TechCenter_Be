@@ -38,7 +38,7 @@ builder.Services.AddScoped<IGiaoVienService, GiaoVienService>();
 builder .Services.AddScoped<ILoaiBaiThiService, LoaiBaiThiService>();
 builder.Services.AddScoped<ICauHoiService, CauHoiService>();
 builder.Services.AddScoped<IKetQuaThiService, KetQuaThiService>();
-
+builder.Services.AddScoped<IThongKeService, ThongKeService>();
 
 // Cho phép CORS
 builder.Services.AddCors(options =>

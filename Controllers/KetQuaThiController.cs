@@ -41,5 +41,26 @@ namespace TechCenter.Controllers
             var result = await _ketQuaThiService.UpdateKetQuaThiAsync(dto);
             return Ok(BaseResponse<object>.SuccessUpdated(result));
         }
+
+        [HttpGet("GetKetQuaChoGiaoVien")]
+        public async Task<IActionResult> GetKetQuaChoGiaoVien(int idGiaoVien)
+        {
+            var list = await _ketQuaThiService.GetKetQuaChoGiaoVienAsync(idGiaoVien);
+            return Ok(BaseResponse<object>.SuccessFetched(list));
+        }
+
+        [HttpGet("GetChiTietBaiLamByKetQua")]
+        public async Task<IActionResult> GetChiTietBaiLamByKetQua(int idKetQua)
+        {
+            var data = await _ketQuaThiService.GetChiTietBaiLamByKetQuaAsync(idKetQua);
+            return Ok(BaseResponse<object>.SuccessFetched(data));
+        }
+
+        [HttpGet("GetKetQuaDaChamByHocVien")]
+        public async Task<IActionResult> GetKetQuaDaChamByHocVien(int idHocVien)
+        {
+            var data = await _ketQuaThiService.GetKetQuaDaChamByHocVienAsync(idHocVien);
+            return Ok(BaseResponse<object>.SuccessFetched(data));
+        }
     }
 }

@@ -8,7 +8,8 @@ namespace TechCenter.Services.Interface
     public interface ITaiLieuService
     {
 
-        Task ThemTaiLieuAsync(Tailieu tailieu, IFormFile? file, string folder = "tailieu");
+        Task ThemTaiLieuAsync(Tailieu tailieu, IFormFile? file, int? idLophoc = null, string folder = "tailieu");
         Task<object> GetTaiLieuChoHocVienAsync(int idHocVien);
+        Task<List<TaiLieuByLopDTO>> GetTaiLieuByLopAsync(int idLophoc);
     }
 }

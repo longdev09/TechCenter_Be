@@ -35,5 +35,13 @@ namespace TechCenter.Controllers
             var list = await _lichHocService.GetLichHocChiTietByIdHocVienTheoTuan(idHocVien, tu, den);
             return Ok(BaseResponse<object>.SuccessFetched(list));
         }
+
+        // GET: api/LichHoc/GiaoVienTuan?idGiaoVien=1&tuNgay=2025-05-12&denNgay=2025-05-18
+        [HttpGet("GiaoVienTuan")]
+        public async Task<IActionResult> GetLichGiaoVienTheoTuan(int idGiaoVien, DateOnly tuNgay, DateOnly denNgay)
+        {
+            var data = await _lichHocService.GetLichHocChiTietByIdGiaoVienTheoTuan(idGiaoVien, tuNgay, denNgay);
+            return Ok(BaseResponse<object>.SuccessFetched(data));
+        }
     }
 }

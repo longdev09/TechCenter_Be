@@ -13,5 +13,11 @@ namespace TechCenter.Services.Interface
             List<InsertChiTietTracNghiemDTO> dtos);
 
         Task<bool> UpdateKetQuaThiAsync(UpdateKetQuaThiDTO dto);
+
+        Task<List<KetQuaForGiaoVienDTO>> GetKetQuaChoGiaoVienAsync(int idGiaoVien);
+
+ 
+        Task<List<ChiTietCauHoiBaiLamDTO>> GetChiTietBaiLamByKetQuaAsync(int idKetQua);
+        Task<List<KetQuaHocVienByMonDTO>> GetKetQuaDaChamByHocVienAsync(int idHocVien);
     }
 }
